@@ -1,0 +1,4 @@
+rootProject.name = 'enigmashowdown'
+include 'core'
+include 'server'
+include 'client'

@@ -1,0 +1,22 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+
+[.editorconfig]
+max_line_length = 100
+
+[{*.kt,*.kts}]
+indent_style = space
+indent_size = 4
+max_line_length = 180
+# Continuation indent is no longer something the Kotlin formatting recommends https://github.com/pinterest/ktlint/issues/816
+
+ij_kotlin_allow_trailing_comma = true
+# https://pinterest.github.io/ktlint/0.50.0/rules/configuration-ktlint/#trailing-comma-on-call-site
+ij_kotlin_allow_trailing_comma_on_call_site = true

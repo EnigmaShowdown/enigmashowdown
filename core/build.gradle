@@ -1,0 +1,11 @@
+apply plugin: "kotlin"
+
+
+dependencies {
+    api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
+    api "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
+    api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    api "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
+
+    api 'org.zeromq:jeromq:0.5.3' // https://github.com/zeromq/jeromq/tags
+}
