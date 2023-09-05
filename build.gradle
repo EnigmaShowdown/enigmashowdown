@@ -5,6 +5,8 @@ buildscript {
         jacksonVersion = "2.15.1" // https://github.com/FasterXML/jackson/wiki/Jackson-Releases
 
         kotlinVersion = "1.9.10" // https://kotlinlang.org/docs/releases.html#release-details
+        slf4jVersion = '2.0.9' // http://www.slf4j.org/download.html
+        log4jVersion = '2.20.0' // https://logging.apache.org/log4j/2.x/javadoc.html
     }
 
     repositories {
@@ -53,6 +55,9 @@ spotless {
         // https://pinterest.github.io/ktlint/
         ktlint()
             .setEditorConfigPath("$projectDir/.editorconfig")
+            .editorConfigOverride(Map.of(
+                    "ktlint_standard_no-wildcard-imports", "disabled", // thanks https://github.com/diffplug/spotless/issues/476
+            ))
     }
     groovyGradle {
         // https://github.com/diffplug/spotless/tree/main/plugin-gradle#groovy

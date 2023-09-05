@@ -2,6 +2,10 @@ apply plugin: "kotlin"
 
 
 dependencies {
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    api group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
+    implementation "org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion"
+
     api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     api "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion"
     api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
