@@ -5,4 +5,5 @@ This page aims to document how to develop Enigma Showdown and how the technologi
 
 .. toctree::
 
+  setup/index
   technology/index
