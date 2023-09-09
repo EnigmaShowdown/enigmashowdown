@@ -1,5 +1,12 @@
 apply plugin: "kotlin"
 
 dependencies {
-    api project(":client")
+    api project(":client") // needs to be able to act as a client
+    api project(":server") // The visualization should also be able to host the server and act as its own client
+
+
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+//    implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop" // we have our own physics
+//    implementation "com.badlogicgames.gdx:gdx-controllers-lwjgl3:$gdxVersion" // we don't need controller support
 }

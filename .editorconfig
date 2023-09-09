@@ -27,6 +27,8 @@ indent_size = 4
 max_line_length = 180
 # Continuation indent is no longer something the Kotlin formatting recommends https://github.com/pinterest/ktlint/issues/816
 
+ktlint_code_style = intellij_idea
+
 ij_kotlin_allow_trailing_comma = true
 # https://pinterest.github.io/ktlint/0.50.0/rules/configuration-ktlint/#trailing-comma-on-call-site
 ij_kotlin_allow_trailing_comma_on_call_site = true

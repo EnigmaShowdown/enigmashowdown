@@ -2,4 +2,9 @@ apply plugin: "kotlin"
 
 dependencies {
     api project(":core")
+
+    // https://libgdx.com/wiki/articles/dependency-management-with-gradle#box2d-gradle
+    // Conquest needs Box2D for its physics
+    api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+    api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop" // we always expect the server to be running on a "desktop". Change this later if needed
 }

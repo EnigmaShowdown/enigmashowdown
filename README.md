@@ -3,20 +3,9 @@ Enigma Showdown is a framework for allowing anyone to create an AI to play a rea
 This codebase contains that framework, along with the game, Enigma Showdown: Conquest.
 Conquest is a game fully implemented using the framework, and the `view` module contains code for visualizing Conquest.
 
-## Modules
+## [Project Structure](https://enigmashowdown.readthedocs.io/en/latest/development/project/structure.html)
 
-* core
-  * a
-* common
-  * Depends on core
-* server
-  * Depends on common
-  * Contains logic for handling the connecting of clients
-* 
-* client
-  * Depends on core
-  * Contains logic used to connect to a server.
-  * Parse and serialize
+See https://enigmashowdown.readthedocs.io/en/latest/development/project/structure.html for more info.
 
 ## Objective
 
@@ -38,7 +27,7 @@ The ground type alters how the player is able to move.
 
 #### Barrier type
 
-The barrier determines
+The barrier determines ...
 
 ### Electronics
 

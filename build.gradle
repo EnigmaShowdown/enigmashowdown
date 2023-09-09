@@ -7,6 +7,8 @@ buildscript {
         kotlinVersion = "1.9.10" // https://kotlinlang.org/docs/releases.html#release-details
         slf4jVersion = '2.0.9' // http://www.slf4j.org/download.html
         log4jVersion = '2.20.0' // https://logging.apache.org/log4j/2.x/javadoc.html
+
+        gdxVersion = '1.12.0' // https://github.com/libgdx/libgdx/releases
     }
 
     repositories {
