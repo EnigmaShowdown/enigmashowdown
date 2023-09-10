@@ -9,6 +9,5 @@ class TitleScreen(
 ) : ScreenAdapter() {
 
     override fun render(delta: Float) {
-
     }
 }
