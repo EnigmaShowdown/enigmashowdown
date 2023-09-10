@@ -10,3 +10,8 @@ dependencies {
 //    implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop" // we have our own physics
 //    implementation "com.badlogicgames.gdx:gdx-controllers-lwjgl3:$gdxVersion" // we don't need controller support
 }
+
+processResources {
+    dependsOn(":visualization-packer:run")
+    from("$rootDir/visualization-packer/output-assets")
+}

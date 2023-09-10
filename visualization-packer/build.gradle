@@ -1,0 +1,13 @@
+apply plugin: "kotlin"
+
+dependencies {
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+}
+
+task run(dependsOn: classes, type: JavaExec) {
+    mainClass = "com.enigmashowdown.visual.packer.TexturePackerMain"
+    classpath = sourceSets.main.runtimeClasspath
+//    standardInput = System.in
+    workingDir = projectDir
+}

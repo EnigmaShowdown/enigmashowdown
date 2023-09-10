@@ -1,5 +1,6 @@
 .idea/
 .vscode/
+visualization-packer/output-assets/
 
 # Created by https://www.toptal.com/developers/gitignore/api/vim,java,linux,macos,gradle,kotlin,windows,intellij,visualstudiocode,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=vim,java,linux,macos,gradle,kotlin,windows,intellij,visualstudiocode,python
