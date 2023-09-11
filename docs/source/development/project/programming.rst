@@ -94,4 +94,4 @@ This forces us to define things that need to be rendered to the screen in a stan
   ))
 
 We have now defined a single Renderable, which is made up of smaller Renderables.
-This helps us modularize our rendering code and makes it reusable.
+This helps us modularize our rendering code by making it reusable.

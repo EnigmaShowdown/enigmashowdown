@@ -7,3 +7,4 @@ This page aims to document how to develop Enigma Showdown and how the technologi
 
   setup/index
   project/index
+  git
