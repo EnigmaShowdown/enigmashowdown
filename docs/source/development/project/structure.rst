@@ -47,6 +47,12 @@ This module is the desktop implementation of the ``visualization`` module.
 You should not have to touch this module.
 If we were able to run this game on android, we would have a ``visualization^android`` module, for example.
 
+``visualization-packer`` module
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This module is independent from other modules, but its output is used by the ``visualization`` module.
+You should not have to touch this module.
+This module exists to automatically package assets inside of ``visualization-packer/raw-assets`` into a skin for easy use in code.
 
 ``test-ai`` module
 ^^^^^^^^^^^^^^^^^^^^^^

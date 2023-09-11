@@ -6,3 +6,5 @@ Project
 
   technology
   structure
+  programming
+  git
