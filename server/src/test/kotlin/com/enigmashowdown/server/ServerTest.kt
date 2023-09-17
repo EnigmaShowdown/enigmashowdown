@@ -1,9 +1,14 @@
 package com.enigmashowdown.server
 
-import com.enigmashowdown.message.TestMessage
+import com.enigmashowdown.EnigmaShowdownConstants
+import com.enigmashowdown.packet.request.ConnectRequest
+import com.enigmashowdown.packet.request.RequestMessage
+import com.enigmashowdown.packet.response.ConnectResponse
+import com.enigmashowdown.packet.response.ResponseMessage
 import com.enigmashowdown.util.createDefaultMapper
 import com.enigmashowdown.util.getLogger
 import org.zeromq.ZContext
+import java.util.*
 
 object ServerTest {
     val logger = getLogger()
@@ -11,13 +16,19 @@ object ServerTest {
 
 fun main(args: Array<String>) {
     val objectMapper = createDefaultMapper()
+    val serverHandler = object : ServerHandler {
+        override fun responseTo(request: RequestMessage): ResponseMessage {
+            if (request is ConnectRequest) {
+                return ConnectResponse(UUID.randomUUID(), EnigmaShowdownConstants.PORT_BROADCAST, "")
+            }
+            throw IllegalArgumentException("Unknown request: $request")
+        }
+    }
     ZContext().use { context ->
-        ZeroMqBroadcastManager(objectMapper, context).use { broadcastManager ->
-            broadcastManager.start()
+        ZeroMqServerManager(serverHandler, objectMapper, context).use { serverManager ->
+            serverManager.start()
             ServerTest.logger.info("Started server")
             while (true) {
-                val message = TestMessage("this is a test")
-                broadcastManager.broadcast(message)
                 Thread.sleep(500)
             }
         }

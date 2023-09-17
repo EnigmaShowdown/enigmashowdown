@@ -10,17 +10,18 @@ In an Enigma Showdown game, there are a few different components:
 
   * Has two open ports that clients can communicate with
 
-    * Broadcast port (31877)
+    * Server port (31877)
+
+      * Clients can send messages to the server on this port, and the server responds with a response.
+      * This port is most similar to an HTTP endpoint.
+      * This is how client AIs send their desired actions to the server
+
+    * Broadcast port (31878)
 
       * Broadcast messages are sent on this port that all clients can see.
       * One broadcast message is sent each tick. This message contains the state of the entire world, and gives the client AI enough information on what actions it has available to make
       * Clients can not send messages to the server on this port
 
-    * Server port (31878)
-
-      * Clients can send messages to the server on this port, and the server responds with a response.
-      * This port is most similar to an HTTP endpoint.
-      * This is how client AIs send their desired actions to the server
 
 * The clients
 

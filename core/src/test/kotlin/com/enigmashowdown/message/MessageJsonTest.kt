@@ -1,5 +1,7 @@
 package com.enigmashowdown.message
 
+import com.enigmashowdown.packet.broadcast.BroadcastMessage
+import com.enigmashowdown.packet.broadcast.TestMessage
 import com.enigmashowdown.util.createDefaultMapper
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
