@@ -1,10 +1,10 @@
 package com.enigmashowdown.server
 
 import com.enigmashowdown.EnigmaShowdownConstants
-import com.enigmashowdown.packet.request.ConnectRequest
-import com.enigmashowdown.packet.request.RequestMessage
-import com.enigmashowdown.packet.response.ConnectResponse
-import com.enigmashowdown.packet.response.ResponseMessage
+import com.enigmashowdown.message.request.ConnectRequest
+import com.enigmashowdown.message.request.RequestMessage
+import com.enigmashowdown.message.response.ConnectResponse
+import com.enigmashowdown.message.response.ResponseMessage
 import com.enigmashowdown.util.createDefaultMapper
 import com.enigmashowdown.util.getLogger
 import org.zeromq.ZContext

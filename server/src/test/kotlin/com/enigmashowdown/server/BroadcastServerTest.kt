@@ -1,6 +1,6 @@
 package com.enigmashowdown.server
 
-import com.enigmashowdown.packet.broadcast.TestMessage
+import com.enigmashowdown.message.broadcast.TestMessage
 import com.enigmashowdown.util.createDefaultMapper
 import com.enigmashowdown.util.getLogger
 import org.zeromq.ZContext

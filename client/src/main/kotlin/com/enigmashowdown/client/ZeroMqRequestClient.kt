@@ -1,7 +1,7 @@
 package com.enigmashowdown.client
 
-import com.enigmashowdown.packet.request.RequestMessage
-import com.enigmashowdown.packet.response.ResponseMessage
+import com.enigmashowdown.message.request.RequestMessage
+import com.enigmashowdown.message.response.ResponseMessage
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.zeromq.SocketType
 import org.zeromq.ZContext
@@ -22,8 +22,8 @@ class ZeroMqRequestClient(
         return CompletableFuture.supplyAsync({
             context.createSocket(SocketType.REQ).use { socket ->
                 socket.connect("tcp://$host:$port")
-                socket.sendTimeOut = 800//ms
-                socket.receiveTimeOut = 800 //ms
+                socket.sendTimeOut = 800 // ms
+                socket.receiveTimeOut = 800 // ms
                 if (!socket.send(dataToSend)) {
                     throw IllegalStateException("Message failed to send")
                 }

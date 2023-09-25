@@ -1,11 +1,12 @@
-package com.enigmashowdown.packet.response
+package com.enigmashowdown.message.response
 
-import com.enigmashowdown.packet.Packet
+import com.enigmashowdown.util.Packet
 import com.fasterxml.jackson.annotation.JsonSubTypes
 
 @JsonSubTypes(
     value = [
         JsonSubTypes.Type(ConnectResponse::class),
+        JsonSubTypes.Type(FailedConnectResponse::class),
     ],
 )
 interface ResponseMessage : Packet

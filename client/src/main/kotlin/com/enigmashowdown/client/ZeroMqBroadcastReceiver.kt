@@ -1,6 +1,6 @@
 package com.enigmashowdown.client
 
-import com.enigmashowdown.packet.broadcast.BroadcastMessage
+import com.enigmashowdown.message.broadcast.BroadcastMessage
 import com.enigmashowdown.util.getLogger
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.zeromq.SocketType

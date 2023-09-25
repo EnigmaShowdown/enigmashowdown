@@ -2,6 +2,7 @@ apply plugin: "kotlin"
 
 dependencies {
     api project(":core")
+    api project(":common")
 
     // https://libgdx.com/wiki/articles/dependency-management-with-gradle#box2d-gradle
     // Conquest needs Box2D for its physics

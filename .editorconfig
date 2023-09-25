@@ -35,3 +35,5 @@ ij_kotlin_allow_trailing_comma = true
 ij_kotlin_allow_trailing_comma_on_call_site = true
 ij_kotlin_name_count_to_use_star_import = 99
 ij_kotlin_name_count_to_use_star_import_for_members = 99
+ij_kotlin_packages_to_use_import_on_demand = unset # https://github.com/pinterest/ktlint/pull/1272
+# NOTE: If java.util.* is getting wildcard'd, go into Editor > Code Style > Kotlin > Imports > Package to Use Import with '*'. https://stackoverflow.com/a/51690501/5434860

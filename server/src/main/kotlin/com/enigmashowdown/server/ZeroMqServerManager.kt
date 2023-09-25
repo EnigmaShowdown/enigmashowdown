@@ -1,7 +1,7 @@
 package com.enigmashowdown.server
 
 import com.enigmashowdown.EnigmaShowdownConstants
-import com.enigmashowdown.packet.request.RequestMessage
+import com.enigmashowdown.message.request.RequestMessage
 import com.enigmashowdown.util.getLogger
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.zeromq.SocketType
@@ -14,9 +14,8 @@ class ZeroMqServerManager(
     private val context: ZContext,
     private val host: String = "*",
     private val port: Int = EnigmaShowdownConstants.PORT_SERVER,
-): AutoCloseable {
+) : AutoCloseable {
     private val executorService = Executors.newSingleThreadExecutor()
-
 
     fun start() {
         executorService.execute(::run)
@@ -32,6 +31,7 @@ class ZeroMqServerManager(
                     logger.warn("Received data is null. Something must be wrong")
                     continue
                 }
+                // TODO error handling for readValue call
                 val request = objectMapper.readValue(receivedData, RequestMessage::class.java)
                 val response = serverHandler.responseTo(request)
                 val responseData = objectMapper.writeValueAsBytes(response)
@@ -46,5 +46,4 @@ class ZeroMqServerManager(
     companion object {
         val logger = getLogger()
     }
-
 }

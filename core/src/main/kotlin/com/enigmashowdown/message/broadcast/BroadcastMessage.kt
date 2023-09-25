@@ -1,6 +1,6 @@
-package com.enigmashowdown.packet.broadcast
+package com.enigmashowdown.message.broadcast
 
-import com.enigmashowdown.packet.Packet
+import com.enigmashowdown.util.Packet
 import com.fasterxml.jackson.annotation.JsonSubTypes
 
 /**
@@ -16,5 +16,4 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
         JsonSubTypes.Type(TestMessage::class),
     ],
 )
-interface BroadcastMessage : Packet {
-}
+interface BroadcastMessage : Packet

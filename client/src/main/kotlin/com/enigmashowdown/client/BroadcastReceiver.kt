@@ -1,6 +1,6 @@
 package com.enigmashowdown.client
 
-import com.enigmashowdown.packet.broadcast.BroadcastMessage
+import com.enigmashowdown.message.broadcast.BroadcastMessage
 
 interface BroadcastReceiver {
     fun popMessage(): BroadcastMessage?

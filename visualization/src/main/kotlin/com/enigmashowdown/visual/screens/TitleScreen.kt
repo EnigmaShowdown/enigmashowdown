@@ -68,7 +68,6 @@ class TitleScreen(
         uiStage.act(delta)
 
         if (hostButton.isPressed) {
-            logger.info("host clicked")
         }
         if (connectButton.isPressed) {
             logger.info("join clicked")

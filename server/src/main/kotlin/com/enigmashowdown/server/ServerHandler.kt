@@ -1,8 +1,8 @@
 package com.enigmashowdown.server
 
-import com.enigmashowdown.packet.request.RequestMessage
-import com.enigmashowdown.packet.response.ResponseMessage
+import com.enigmashowdown.message.request.RequestMessage
+import com.enigmashowdown.message.response.ResponseMessage
 
-interface ServerHandler {
+fun interface ServerHandler {
     fun responseTo(request: RequestMessage): ResponseMessage
 }

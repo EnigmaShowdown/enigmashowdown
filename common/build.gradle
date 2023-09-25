@@ -1,0 +1,7 @@
+apply plugin: "kotlin"
+
+dependencies {
+    api project(":core")
+
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+}

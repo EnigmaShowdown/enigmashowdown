@@ -1,4 +1,4 @@
-package com.enigmashowdown.packet
+package com.enigmashowdown.util
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 
