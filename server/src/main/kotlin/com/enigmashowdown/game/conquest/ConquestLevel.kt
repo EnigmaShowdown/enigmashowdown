@@ -8,6 +8,7 @@ import com.enigmashowdown.game.GameMove
 import com.enigmashowdown.game.conquest.action.ConquestAction
 import com.enigmashowdown.game.conquest.map.ConquestLevelInfo
 import com.enigmashowdown.game.conquest.map.LevelMap
+import com.enigmashowdown.game.conquest.state.BarrierTile
 import com.enigmashowdown.game.conquest.state.ConquestStateView
 import com.enigmashowdown.game.conquest.state.PlayerState
 import com.enigmashowdown.game.conquest.util.ShapeConstants
@@ -65,7 +66,7 @@ class ConquestLevel(
                 val position = Vec2(transform.x, transform.y)
                 PlayerState(player.id, position)
             }
-            return ConquestStateView(tick, playerStates, levelMap.barrierMap)
+            return ConquestStateView(tick, playerStates, levelMap.barrierMap.map { BarrierTile(it.key, it.value) })
         }
 
     fun move(gameMove: GameMove<ConquestAction>) {

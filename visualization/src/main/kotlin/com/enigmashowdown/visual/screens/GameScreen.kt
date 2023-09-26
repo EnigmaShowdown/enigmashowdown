@@ -1,27 +1,35 @@
 package com.enigmashowdown.visual.screens
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.Color
+import com.enigmashowdown.ClientType
 import com.enigmashowdown.EnigmaShowdownConstants
 import com.enigmashowdown.client.BroadcastReceiver
 import com.enigmashowdown.client.RequestClient
 import com.enigmashowdown.client.ZeroMqBroadcastReceiver
 import com.enigmashowdown.client.ZeroMqRequestClient
 import com.enigmashowdown.game.conquest.ConquestGameManager
+import com.enigmashowdown.game.conquest.map.ConquestLevelInfo
 import com.enigmashowdown.game.conquest.state.ConquestStateView
 import com.enigmashowdown.message.broadcast.LevelStateBroadcast
+import com.enigmashowdown.message.broadcast.TestMessage
+import com.enigmashowdown.message.request.ConnectRequest
+import com.enigmashowdown.message.request.LevelRequest
 import com.enigmashowdown.server.GameServer
 import com.enigmashowdown.server.ZeroMqBroadcastManager
 import com.enigmashowdown.server.ZeroMqServerManager
 import com.enigmashowdown.util.createDefaultMapper
 import com.enigmashowdown.util.getLogger
+import com.enigmashowdown.visual.render.RenderObject
 import com.enigmashowdown.visual.render.Renderable
 import com.enigmashowdown.visual.render.RenderableMultiplexer
 import com.enigmashowdown.visual.render.ResetRenderable
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.zeromq.ZContext
 
-fun hostServer(): GameScreen {
+fun hostServer(screenChanger: ScreenChanger, renderObject: RenderObject): GameScreen {
     val mapper = createDefaultMapper()
     val context = ZContext()
     // TODO allow user to change port this is hosted on
@@ -85,6 +93,21 @@ class GameScreen(
                     val conquestStateView = message.gameStateView as ConquestStateView
                     logger.info("Client got state: $conquestStateView")
                 }
+                is TestMessage -> {
+                    logger.info("Test message: ${message.message}")
+                }
+            }
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
+            // TODO remove this once we properly implement level selection
+            // This will complete in the background. We won't check for a successful response. We'll just assume it's fine.
+            requestClient.send(LevelRequest(ConquestLevelInfo.BETA_1.levelId))
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
+            // TODO test this with an actual player client
+            // This is a hack to tell the server that a player just connected
+            requestClient.send(ConnectRequest(ClientType.PLAYER)).handleAsync { message, throwable ->
+                logger.info("Got response: $message")
             }
         }
 
@@ -92,14 +115,15 @@ class GameScreen(
     }
 
     override fun resize(width: Int, height: Int) {
-        super.resize(width, height)
         renderable.resize(width, height)
     }
 
     override fun dispose() {
-        super.dispose()
         onDispose()
         renderable.dispose()
+    }
+    override fun hide() {
+        dispose()
     }
 
     companion object {

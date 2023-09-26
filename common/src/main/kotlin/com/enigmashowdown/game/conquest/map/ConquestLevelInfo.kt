@@ -1,7 +1,6 @@
 package com.enigmashowdown.game.conquest.map
 
 import com.badlogic.gdx.assets.loaders.resolvers.ClasspathFileHandleResolver
-import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import com.enigmashowdown.game.conquest.LevelId
 import java.util.UUID
 
@@ -17,7 +16,8 @@ enum class ConquestLevelInfo(
 
     fun createLevelMap(): LevelMap {
 //        Gdx.files.classpath()
-        val tiledMap = TmxMapLoader(ClasspathFileHandleResolver()).load(tiledMapPath)
+//        val tiledMap = TmxMapLoader(ClasspathFileHandleResolver()).load(tiledMapPath)
+        val tiledMap = SimpleTmxMapLoader(ClasspathFileHandleResolver()).loadNoTextures(tiledMapPath)
         return LevelMap(tiledMap)
     }
 

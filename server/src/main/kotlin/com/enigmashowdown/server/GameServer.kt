@@ -113,9 +113,11 @@ class GameServer<StateView : GameStateView, Action : PlayerAction> (
                 levelStartTick = null
             }
         }
+//        broadcastManager.broadcast(TestMessage("GameServer test message"))
 
         val levelStartTick = levelStartTick
         if (levelStartTick != null) {
+            val levelId = gameManager.levelId!!
             val players = gameManager.players!!
             val stateView = gameManager.gameStateView!!
 
@@ -125,7 +127,7 @@ class GameServer<StateView : GameStateView, Action : PlayerAction> (
                     this.levelStartTick = null
                 } else {
                     // We are confident we will soon begin the level, so let's send out a broadcast
-                    broadcastManager.broadcast(LevelStateBroadcast(levelStartTick - serverTick, stateView))
+                    broadcastManager.broadcast(LevelStateBroadcast(levelStartTick - serverTick, levelId, stateView))
                 }
                 actionQueue.clear()
             } else {
@@ -152,7 +154,7 @@ class GameServer<StateView : GameStateView, Action : PlayerAction> (
                     }
                     gameManager.move(GameMove(actions)) // remember after calling this the gameManager's internal level tick has now incremented.
                 }
-                broadcastManager.broadcast(LevelStateBroadcast(0, stateView))
+                broadcastManager.broadcast(LevelStateBroadcast(0, levelId, stateView))
             }
         } else {
             actionQueue.clear()
@@ -163,6 +165,7 @@ class GameServer<StateView : GameStateView, Action : PlayerAction> (
 
     override fun close() {
         scheduledExecutor.shutdownNow()
+        logger.info("Closed GameServer")
     }
 
     companion object {

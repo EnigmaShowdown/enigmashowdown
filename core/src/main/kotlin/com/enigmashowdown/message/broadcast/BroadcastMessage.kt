@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
 @JsonSubTypes(
     value = [
         JsonSubTypes.Type(TestMessage::class),
+        JsonSubTypes.Type(LevelStateBroadcast::class),
     ],
 )
 interface BroadcastMessage : Packet
