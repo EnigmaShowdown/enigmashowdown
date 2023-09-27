@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName
  */
 @JsonTypeName("conquest-action")
 data class ConquestAction(
-    val moveAction: MoveAction?,
+    val moveAction: MoveAction? = null,
 ) : PlayerAction {
     override val type: String
         get() = "conquest-action"

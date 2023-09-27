@@ -64,7 +64,6 @@ class LevelMap(
                 }
             }
         }
-        println("Barrier map: $barrierMap")
         this.barrierMap = barrierMap
     }
 }

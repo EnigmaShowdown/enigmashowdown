@@ -53,7 +53,7 @@ class ConquestGameManager : GameManager<ConquestStateView, ConquestAction> {
             return false
         }
         if (players.size != 1) {
-            logger.info("Tried starting level when players.size was: ${players.size}")
+//            logger.info("Tried starting level when players.size was: ${players.size}")
             return false
         }
         endCurrentLevel()

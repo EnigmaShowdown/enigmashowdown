@@ -8,6 +8,7 @@ import com.enigmashowdown.game.GameStateView
 import com.enigmashowdown.game.PlayerAction
 import com.enigmashowdown.message.broadcast.LevelStateBroadcast
 import com.enigmashowdown.message.request.ConnectRequest
+import com.enigmashowdown.message.request.KeepAliveRequest
 import com.enigmashowdown.message.request.LevelRequest
 import com.enigmashowdown.message.request.PlayerActionRequest
 import com.enigmashowdown.message.request.RequestMessage
@@ -16,6 +17,8 @@ import com.enigmashowdown.message.response.ErrorResponse
 import com.enigmashowdown.message.response.ResponseMessage
 import com.enigmashowdown.message.response.SuccessResponse
 import com.enigmashowdown.util.getLogger
+import com.enigmashowdown.util.toTicks
+import java.time.Duration
 import java.time.Instant
 import java.util.UUID
 import java.util.concurrent.BlockingDeque
@@ -66,8 +69,13 @@ class GameServer<StateView : GameStateView, Action : PlayerAction> (
                 synchronized(clientMap) {
                     val newId: UUID = UUID.randomUUID()
                     clientMap[newId] = Client(newId, request.clientType, Instant.now())
+                    logger.info("Client connected: $newId")
                     return ConnectResponse(newId, broadcastPort, subscribeTopic)
                 }
+            }
+
+            is KeepAliveRequest -> {
+                keepAlive(request.clientId)
             }
 
             is LevelRequest -> {
@@ -83,6 +91,7 @@ class GameServer<StateView : GameStateView, Action : PlayerAction> (
                 if (!actionQueue.offer(requestedAction)) {
                     throw IllegalStateException("The action queue is full! This should never happen!")
                 }
+                keepAlive(request.playerId)
                 // If we want to, in the future we could try and determine if the player is sending an early or late action request and return an error response if they are.
                 //   For right now, we don't really care. We'll just ignore it in tick()
                 return SuccessResponse
@@ -91,8 +100,18 @@ class GameServer<StateView : GameStateView, Action : PlayerAction> (
         logger.warn("Not set up to handle request: {}", request)
         return ErrorResponse("We are not set up to handle the request of the type: ${request.type}")
     }
+    private fun keepAlive(clientId: UUID) {
+        synchronized(clientMap) {
+            val client = clientMap[clientId]
+            if (client != null) {
+                client.lastPing = Instant.now()
+            }
+        }
+    }
 
     private fun tick() {
+        removeDisconnectedClients()
+
         synchronized(this) {
             requestedLevelId?.let { requestedLevelId ->
                 gameManager.initializeLevel(requestedLevelId) // TODO allow the resetting of a level
@@ -104,7 +123,9 @@ class GameServer<StateView : GameStateView, Action : PlayerAction> (
             if (gameManager.startLevel(connectedPlayers)) {
                 levelStartTick = serverTick + 5 * EnigmaShowdownConstants.TICKS_PER_SECOND // start level in 5 seconds
             } else {
-                logger.warn("Unable to start level with connectedPlayers: $connectedPlayers (maybe too many are connected?)")
+                if (serverTick % Duration.ofSeconds(1).toTicks() == 0) {
+                    logger.warn("Unable to start level with connectedPlayers: $connectedPlayers (maybe too many are connected?)")
+                }
             }
         }
         if (levelStartTick != null) {
@@ -113,7 +134,6 @@ class GameServer<StateView : GameStateView, Action : PlayerAction> (
                 levelStartTick = null
             }
         }
-//        broadcastManager.broadcast(TestMessage("GameServer test message"))
 
         val levelStartTick = levelStartTick
         if (levelStartTick != null) {
@@ -125,6 +145,7 @@ class GameServer<StateView : GameStateView, Action : PlayerAction> (
                 if (!connectedPlayers.containsAll(players)) {
                     logger.info("One of the players disconnected before the level started")
                     this.levelStartTick = null
+                    gameManager.initializeLevel(levelId)
                 } else {
                     // We are confident we will soon begin the level, so let's send out a broadcast
                     broadcastManager.broadcast(LevelStateBroadcast(levelStartTick - serverTick, levelId, stateView))
@@ -154,7 +175,8 @@ class GameServer<StateView : GameStateView, Action : PlayerAction> (
                     }
                     gameManager.move(GameMove(actions)) // remember after calling this the gameManager's internal level tick has now incremented.
                 }
-                broadcastManager.broadcast(LevelStateBroadcast(0, levelId, stateView))
+                // we need to get a new gameStateView because we might have called gameManager.move
+                broadcastManager.broadcast(LevelStateBroadcast(0, levelId, gameManager.gameStateView!!))
             }
         } else {
             actionQueue.clear()
@@ -162,13 +184,27 @@ class GameServer<StateView : GameStateView, Action : PlayerAction> (
 
         serverTick++
     }
+    private fun removeDisconnectedClients() {
+        synchronized(clientMap) {
+            val now = Instant.now()
+            val iterator = clientMap.iterator()
+            while (iterator.hasNext()) {
+                val entry = iterator.next()
+                if (entry.value.lastPing.plus(CONNECTION_TIMEOUT).isBefore(now)) {
+                    iterator.remove()
+                    logger.info("A client disconnected: ${entry.value}")
+                }
+            }
+        }
+    }
 
     override fun close() {
         scheduledExecutor.shutdownNow()
         logger.info("Closed GameServer")
     }
 
-    companion object {
+    private companion object {
         val logger = getLogger()
+        val CONNECTION_TIMEOUT: Duration = Duration.ofSeconds(4)
     }
 }

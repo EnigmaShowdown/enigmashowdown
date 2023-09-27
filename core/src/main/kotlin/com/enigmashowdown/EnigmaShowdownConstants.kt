@@ -3,6 +3,7 @@ package com.enigmashowdown
 object EnigmaShowdownConstants {
     const val TICKS_PER_SECOND = 10
     const val TICK_PERIOD_MILLIS = 100L
+    const val TICK_PERIOD_SECONDS = 0.1f
     const val PORT_SERVER = 31877
     const val PORT_BROADCAST = 31878
 

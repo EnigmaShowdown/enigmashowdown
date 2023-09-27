@@ -91,7 +91,7 @@ class GameScreen(
                 is LevelStateBroadcast -> {
                     // We make a cast here because GameScreen only supports rendering conquest (as of right now)
                     val conquestStateView = message.gameStateView as ConquestStateView
-                    logger.info("Client got state: $conquestStateView")
+//                    logger.info("Client got state: $conquestStateView")
                 }
                 is TestMessage -> {
                     logger.info("Test message: ${message.message}")

@@ -24,6 +24,10 @@ class ZeroMqBroadcastReceiver(
         return queue.poll()
     }
 
+    override fun takeMessage(): BroadcastMessage {
+        return queue.take()
+    }
+
     fun start() {
         executorService.execute(::run)
     }
