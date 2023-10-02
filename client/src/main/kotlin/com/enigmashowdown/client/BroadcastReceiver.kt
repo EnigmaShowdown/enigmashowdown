@@ -8,6 +8,7 @@ import com.enigmashowdown.message.broadcast.BroadcastMessage
 interface BroadcastReceiver {
     /** Pops a message off of the message stack, or returns null if there is no message*/
     fun popMessage(): BroadcastMessage?
+
     /** Waits for a message and returns it. (blocking method)*/
     fun takeMessage(): BroadcastMessage
 }

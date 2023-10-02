@@ -76,6 +76,7 @@ class GameServer<StateView : GameStateView, Action : PlayerAction> (
 
             is KeepAliveRequest -> {
                 keepAlive(request.clientId)
+                return SuccessResponse
             }
 
             is LevelRequest -> {
@@ -96,9 +97,11 @@ class GameServer<StateView : GameStateView, Action : PlayerAction> (
                 //   For right now, we don't really care. We'll just ignore it in tick()
                 return SuccessResponse
             }
+            else -> {
+                logger.warn("Not set up to handle request: {}", request)
+                return ErrorResponse("We are not set up to handle the request of the type: ${request.type}")
+            }
         }
-        logger.warn("Not set up to handle request: {}", request)
-        return ErrorResponse("We are not set up to handle the request of the type: ${request.type}")
     }
     private fun keepAlive(clientId: UUID) {
         synchronized(clientMap) {

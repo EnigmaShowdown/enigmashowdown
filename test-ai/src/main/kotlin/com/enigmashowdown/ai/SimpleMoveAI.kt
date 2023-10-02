@@ -4,7 +4,6 @@ import com.enigmashowdown.ClientType
 import com.enigmashowdown.EnigmaShowdownConstants
 import com.enigmashowdown.client.ZeroMqBroadcastReceiver
 import com.enigmashowdown.client.ZeroMqRequestClient
-import com.enigmashowdown.game.PlayerAction
 import com.enigmashowdown.game.conquest.action.ConquestAction
 import com.enigmashowdown.game.conquest.action.MoveAction
 import com.enigmashowdown.game.conquest.state.ConquestStateView
@@ -59,20 +58,20 @@ fun main(args: Array<String>) {
                                 if (state.tick % Duration.ofMillis(500).toTicks() == 0) {
                                     SimpleMoveAI.logger.debug("Tick: {} with position: {}", state.tick, player.position)
                                 }
-                                client.send(PlayerActionRequest(
-                                    playerId,
-                                    state.tick,
-                                    ConquestAction(
-                                        moveAction = MoveAction(0.0, 0.3)
-                                    )
-                                ))
+                                client.send(
+                                    PlayerActionRequest(
+                                        playerId,
+                                        state.tick,
+                                        ConquestAction(
+                                            moveAction = MoveAction(0.0, 0.3),
+                                        ),
+                                    ),
+                                )
                             }
                         }
                     }
-
                 }
             }
         }
     }
 }
-
