@@ -22,12 +22,16 @@ import com.enigmashowdown.server.ZeroMqBroadcastManager
 import com.enigmashowdown.server.ZeroMqServerManager
 import com.enigmashowdown.util.createDefaultMapper
 import com.enigmashowdown.util.getLogger
+import com.enigmashowdown.visual.LevelVisualization
 import com.enigmashowdown.visual.render.RenderObject
 import com.enigmashowdown.visual.render.Renderable
 import com.enigmashowdown.visual.render.RenderableMultiplexer
+import com.enigmashowdown.visual.render.RenderableReference
 import com.enigmashowdown.visual.render.ResetRenderable
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.zeromq.ZContext
+import java.time.Duration
+import kotlin.math.max
+import kotlin.math.min
 
 fun hostServer(screenChanger: ScreenChanger, renderObject: RenderObject): GameScreen {
     val mapper = createDefaultMapper()
@@ -61,11 +65,11 @@ fun hostServer(screenChanger: ScreenChanger, renderObject: RenderObject): GameSc
         requestClient.close()
     }
 
-    return GameScreen(mapper, onDispose, requestClient, broadcastReceiver)
+    return GameScreen(renderObject, onDispose, requestClient, broadcastReceiver)
 }
 
 class GameScreen(
-    private val mapper: ObjectMapper,
+    private val renderObject: RenderObject,
     private val onDispose: () -> Unit,
     private val requestClient: RequestClient,
     private val broadcastReceiver: BroadcastReceiver,
@@ -73,22 +77,47 @@ class GameScreen(
 
     private val renderable: Renderable
 
+    private var levelVisualization: LevelVisualization? = null
+    private var previousState: LevelStateBroadcast? = null
+    private var currentState: LevelStateBroadcast? = null
+    private var currentStateReceiveNanos: Long? = null
+
     init {
         renderable = RenderableMultiplexer(
             listOf(
                 ResetRenderable(Color.BLACK),
+                RenderableReference { if (previousState == null) null else levelVisualization?.renderable },
 //                StageRenderable(uiStage),
             ),
         )
     }
 
-    override fun render(delta: Float) {
-        super.render(delta)
+    private fun resetLevel() {
+        levelVisualization?.renderable?.dispose()
+
+        levelVisualization = null
+        previousState = null
+        currentState = null
+        currentStateReceiveNanos = null
+    }
+
+    private fun processMessages(nowNanos: Long) {
         while (true) {
             val message = broadcastReceiver.popMessage() ?: break
 
             when (message) {
                 is LevelStateBroadcast -> {
+                    if (currentState?.levelId != message.levelId) { // if the level has changed since last message (or if there was no current state)
+                        resetLevel()
+                    }
+                    previousState = currentState
+                    currentState = message
+                    currentStateReceiveNanos = nowNanos
+                    if (levelVisualization == null) {
+                        val levelInfo = ConquestLevelInfo.fromLevelId(message.levelId) ?: throw IllegalStateException("Invalid level ID provided! message: $message")
+                        levelVisualization = LevelVisualization(renderObject, levelInfo.createLevelMap())
+                    }
+
                     // We make a cast here because GameScreen only supports rendering conquest (as of right now)
                     val conquestStateView = message.gameStateView as ConquestStateView
 //                    logger.info("Client got state: $conquestStateView")
@@ -98,6 +127,12 @@ class GameScreen(
                 }
             }
         }
+    }
+
+    override fun render(delta: Float) {
+        val nowNanos = System.nanoTime()
+        processMessages(nowNanos)
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
             // TODO remove this once we properly implement level selection
             // This will complete in the background. We won't check for a successful response. We'll just assume it's fine.
@@ -108,6 +143,21 @@ class GameScreen(
             // This is a hack to tell the server that a player just connected
             requestClient.send(ConnectRequest(ClientType.PLAYER)).handleAsync { message, throwable ->
                 logger.info("Got response: $message")
+            }
+        }
+        val currentStateReceiveNanos = this.currentStateReceiveNanos
+        val durationSinceLastUpdate = if (currentStateReceiveNanos == null) null else Duration.ofNanos(nowNanos - currentStateReceiveNanos)
+
+        val levelVisualization = this.levelVisualization
+        if (levelVisualization != null) {
+            val previousState = this.previousState
+            val currentState = this.currentState!!
+            durationSinceLastUpdate!!
+
+            if (previousState != null) {
+                // we expect a new state every tick period, so as this becomes closer to 1, we're getting closer to when we should expect a new state
+                val percent = durationSinceLastUpdate.toMillis().toFloat() / EnigmaShowdownConstants.TICK_PERIOD_MILLIS.toFloat()
+                levelVisualization.update(delta, previousState, currentState, max(0.0f, min(1.0f, percent)))
             }
         }
 

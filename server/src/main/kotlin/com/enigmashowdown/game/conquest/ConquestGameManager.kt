@@ -38,7 +38,7 @@ class ConquestGameManager : GameManager<ConquestStateView, ConquestAction> {
         endCurrentLevel()
 
         // TODO do we want to call createLevelMap() in its own thread?
-        val newLevelData = LevelData(level, level.createLevelMap())
+        val newLevelData = LevelData(level, level.createLevelMapNoTextures())
         levelData?.levelMap?.tiledMap?.dispose() // TODO later redo this disposal logic to be cleaner
         levelData = newLevelData
     }

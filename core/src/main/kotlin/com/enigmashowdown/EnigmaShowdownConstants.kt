@@ -1,8 +1,11 @@
 package com.enigmashowdown
 
+import java.time.Duration
+
 object EnigmaShowdownConstants {
     const val TICKS_PER_SECOND = 10
     const val TICK_PERIOD_MILLIS = 100L
+    val TICK_PERIOD = Duration.ofMillis(TICK_PERIOD_MILLIS)
     const val TICK_PERIOD_SECONDS = 0.1f
     const val PORT_SERVER = 31877
     const val PORT_BROADCAST = 31878
