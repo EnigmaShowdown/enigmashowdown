@@ -3,6 +3,7 @@ package com.enigmashowdown.visual.render
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
+import com.enigmashowdown.util.getLogger
 
 class TiledMapRenderable
 /**
@@ -32,5 +33,9 @@ constructor(
 
     override fun dispose() {
         tiledMapRenderer.dispose()
+    }
+
+    private companion object {
+        private val logger = getLogger()
     }
 }

@@ -1,6 +1,6 @@
 package com.enigmashowdown.client
 
-import com.enigmashowdown.message.BroadcastMessage
+import com.enigmashowdown.message.broadcast.BroadcastMessage
 import com.enigmashowdown.util.getLogger
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.zeromq.SocketType
@@ -13,6 +13,8 @@ class ZeroMqBroadcastReceiver(
     private val objectMapper: ObjectMapper,
     private val context: ZContext,
     private val host: String,
+    private val port: Int,
+    private val subscribeTopic: String,
 ) : BroadcastReceiver, AutoCloseable {
 
     private val executorService = Executors.newSingleThreadExecutor()
@@ -22,15 +24,19 @@ class ZeroMqBroadcastReceiver(
         return queue.poll()
     }
 
+    override fun takeMessage(): BroadcastMessage {
+        return queue.take()
+    }
+
     fun start() {
         executorService.execute(::run)
     }
 
     private fun run() {
         context.createSocket(SocketType.SUB).use { socket ->
-            socket.connect("tcp://$host")
+            socket.connect("tcp://$host:$port") // TODO doing $host:$port won't work for IPv6 addresses
             socket.setLinger(0)
-            socket.subscribe("".toByteArray(Charsets.UTF_8))
+            socket.subscribe(subscribeTopic.toByteArray(Charsets.UTF_8))
             while (true) {
                 val data = socket.recv()
                 val message = objectMapper.readValue(data, BroadcastMessage::class.java)

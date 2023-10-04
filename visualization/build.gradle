@@ -3,6 +3,7 @@ apply plugin: "kotlin"
 dependencies {
     api project(":client") // needs to be able to act as a client
     api project(":server") // The visualization should also be able to host the server and act as its own client
+    api project(":common") // The visualization should be able to use TiledMap code from :common
 
 
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"

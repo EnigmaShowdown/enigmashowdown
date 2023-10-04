@@ -68,7 +68,8 @@ class TitleScreen(
         uiStage.act(delta)
 
         if (hostButton.isPressed) {
-            logger.info("host clicked")
+            val newScreen = hostServer(screenChanger, renderObject)
+            screenChanger.change(newScreen)
         }
         if (connectButton.isPressed) {
             logger.info("join clicked")

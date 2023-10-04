@@ -1,4 +1,4 @@
-package com.enigmashowdown.message
+package com.enigmashowdown.message.broadcast
 
 import com.fasterxml.jackson.annotation.JsonTypeName
 

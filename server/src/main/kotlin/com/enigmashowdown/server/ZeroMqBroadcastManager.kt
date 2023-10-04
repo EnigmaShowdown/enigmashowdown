@@ -1,7 +1,7 @@
 package com.enigmashowdown.server
 
 import com.enigmashowdown.EnigmaShowdownConstants
-import com.enigmashowdown.message.BroadcastMessage
+import com.enigmashowdown.message.broadcast.BroadcastMessage
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.zeromq.SocketType
 import org.zeromq.ZContext
