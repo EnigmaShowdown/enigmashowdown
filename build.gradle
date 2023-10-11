@@ -91,6 +91,6 @@ subprojects {
 wrapper {
     // https://gradle.org/releases/
     // remember to run this task after updating gradleVersion!
-    gradleVersion = '8.3'
+    gradleVersion = '8.4'
     distributionType = Wrapper.DistributionType.ALL
 }
