@@ -86,18 +86,22 @@ class LevelCountdown(
             // Display number 3 from ticks 40-30, with the alpha channel going from 1.0-0.0 in the 10 ticks
             three.color.a = ((previousState.ticksUntilBegin - percent) % EnigmaShowdownConstants.TICKS_PER_SECOND) / EnigmaShowdownConstants.TICKS_PER_SECOND.toFloat()
         } else if (previousState.ticksUntilBegin > 2 * EnigmaShowdownConstants.TICKS_PER_SECOND) {
-            // Display number 2 from ticks 30-20, with the alpha channel going from 1.0-0.0 in the 10 ticks
+            // Make sure 3 is completely hidden when displaying 2
             three.color.a = 0f
+            // Display number 2 from ticks 30-20, with the alpha channel going from 1.0-0.0 in the 10 ticks
             two.color.a = ((previousState.ticksUntilBegin - percent) % EnigmaShowdownConstants.TICKS_PER_SECOND).toFloat() / EnigmaShowdownConstants.TICKS_PER_SECOND.toFloat()
         } else if (previousState.ticksUntilBegin > 1 * EnigmaShowdownConstants.TICKS_PER_SECOND) {
-            // Display number 1 from ticks 20-10, with the alpha channel going from 1.0-0.0 in the 10 ticks
+            // Make sure 2 is completely hidden when displaying 1
             two.color.a = 0f
+            // Display number 1 from ticks 20-10, with the alpha channel going from 1.0-0.0 in the 10 ticks
             one.color.a = ((previousState.ticksUntilBegin - percent) % EnigmaShowdownConstants.TICKS_PER_SECOND).toFloat() / EnigmaShowdownConstants.TICKS_PER_SECOND.toFloat()
         } else if (previousState.ticksUntilBegin > 0 * EnigmaShowdownConstants.TICKS_PER_SECOND) {
-            // Display GO! from ticks 10-0, with the alpha channel going from 1.0-0.0 in the 10 ticks
+            // Make sure 1 is completely hidden when displaying GO!
             one.color.a = 0f
+            // Display GO! from ticks 10-0, with the alpha channel going from 1.0-0.0 in the 10 ticks
             go.color.a = ((previousState.ticksUntilBegin - percent) % EnigmaShowdownConstants.TICKS_PER_SECOND).toFloat() / EnigmaShowdownConstants.TICKS_PER_SECOND.toFloat()
         } else {
+            // Make sure GO! is hidden when countdown ticks are over
             go.color.a = 0f
         }
 
