@@ -20,7 +20,7 @@ import com.enigmashowdown.visual.render.TiledMapRenderable
 import com.enigmashowdown.visual.render.ViewportResizerRenderable
 import com.enigmashowdown.visual.update.Updatable
 
-private const val VIEW_WIDTH = 25f
+private const val VIEW_WIDTH = 30f
 private const val VIEW_HEIGHT = 20f
 
 /**
@@ -36,6 +36,7 @@ class LevelVisualization(
     private val tileSize = map.tileSize
 
     private val levelCountdown = LevelCountdown(renderObject)
+    private val entitySpriteManager: EntitySpriteManager
 
     val renderable: Renderable
 
@@ -51,15 +52,20 @@ class LevelVisualization(
         tiledViewport = ExtendViewport(VIEW_WIDTH * tileSize, VIEW_HEIGHT * tileSize, tiledCamera) // let this viewport handle the camera
         stage = Stage(stageViewport, renderObject.batch)
 
+        entitySpriteManager = EntitySpriteManager(renderObject, stage)
+
+//        stage.isDebugAll = true // turn on if you are having trouble figuring out what the bounds of your actor is
         renderable = RenderableMultiplexer(
             listOf(
                 ViewportResizerRenderable(tiledViewport), // we need a resizer for tiledViewport because it is not managed by a stage like stateViewport is
                 TiledMapRenderable(tiledMap, tiledCamera, intArrayOf(map.backgroundLayerIndex, map.floorLayerIndex, map.foregroundLayerIndex)),
                 StageRenderable(stage),
+                entitySpriteManager.debugRenderable,
                 TiledMapRenderable(tiledMap, tiledCamera, intArrayOf(map.topLayerIndex)),
                 levelCountdown.renderable,
 
                 DisposeRenderable { map.tiledMap.dispose() },
+                DisposeRenderable(entitySpriteManager::dispose),
             ),
         )
 
@@ -74,20 +80,21 @@ class LevelVisualization(
 
         tiledViewport.camera.position.set(cameraPosition.x * tileSize, cameraPosition.y * tileSize, 0f)
         stageViewport.camera.position.set(cameraPosition.x, cameraPosition.y, 0f)
-        tiledViewport.camera.update()
-        stageViewport.camera.update()
+        tiledViewport.apply()
+        stageViewport.apply()
 
         levelCountdown.update(delta, previousState, currentState, percent)
+        entitySpriteManager.update(delta, previousState, currentState, percent)
     }
     private fun averagePlayerPosition(state: ConquestStateView): Vector2 {
-        if (state.players.isEmpty()) {
+        if (state.entities.isEmpty()) {
             // We don't ever expect players to be empty, but in the off chance that it is, we'll just return this.
             //   If in the future this is a case we need to properly handle, we may consider giving the level a "default camera position" or just not move the camera at all in this case
             return Vector2()
         }
         var playerCount = 0
         val playerLocationSum = Vector2()
-        for (player in state.players) {
+        for (player in state.entities) {
             playerLocationSum.add(player.position)
             playerCount++
         }
