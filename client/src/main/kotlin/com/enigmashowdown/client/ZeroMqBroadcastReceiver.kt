@@ -37,10 +37,10 @@ class ZeroMqBroadcastReceiver(
             socket.connect("tcp://$host:$port") // TODO doing $host:$port won't work for IPv6 addresses
             socket.setLinger(0)
             socket.subscribe(subscribeTopic.toByteArray(Charsets.UTF_8))
-            while (true) {
+            while (!Thread.currentThread().isInterrupted) {
                 val data = socket.recv()
                 val message = objectMapper.readValue(data, BroadcastMessage::class.java)
-                if (!queue.offer(message)) {
+                if (!queue.offer(message)) { // queue.offer adds the message
                     throw IllegalStateException("The queue is full! This should not happen!")
                 }
             }
