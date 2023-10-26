@@ -12,7 +12,7 @@ enum class ConquestLevelInfo(
     val levelId: UUID,
     val tiledMapPath: String,
 ) {
-    BETA_1(LevelId.BETA_1, "conquest/beta1.tmx"),
+    BETA_1(LevelId.BETA_1, "conquest/level1.tmx"),
     ;
 
     fun createLevelMapNoTextures(): LevelMap {
