@@ -11,9 +11,7 @@ import com.enigmashowdown.game.conquest.map.ConquestLevelInfo
 import com.enigmashowdown.game.conquest.map.LevelMap
 import com.enigmashowdown.game.conquest.state.BarrierTile
 import com.enigmashowdown.game.conquest.state.ConquestStateView
-import com.enigmashowdown.game.conquest.state.PlayerState
 import com.enigmashowdown.game.conquest.util.ShapeConstants
-import com.enigmashowdown.util.Vec2
 import com.enigmashowdown.util.getLogger
 import java.util.UUID
 import kotlin.math.cos
@@ -31,6 +29,7 @@ class ConquestLevel(
 
     val world = World(Vector2.Zero, false)
     val players: List<ConquestPlayer>
+    val entities: List<ConquestEntity>
 
     private val tempVector = Vector2()
 
@@ -55,11 +54,13 @@ class ConquestLevel(
                 )
             }
         }
+
         players = playerIds.map { ConquestPlayer(it, world) }
+        entities = players // TODO this line may need to change when we add more entities
 
         when (conquestLevelInfo) {
             ConquestLevelInfo.BETA_1 -> {
-                for (player in players) {
+                for (player in entities) {
                     player.teleport(50f, 50f)
                 }
             }
@@ -68,12 +69,10 @@ class ConquestLevel(
 
     val gameStateView: ConquestStateView
         get() {
-            val playerStates = players.map { player ->
-                val transform = player.playerBody.transform.position!!
-                val position = Vec2(transform.x, transform.y)
-                PlayerState(player.id, position)
+            val entityStates = entities.map { entity ->
+                entity.toState()
             }
-            return ConquestStateView(tick, playerStates, levelMap.barrierMap.map { BarrierTile(it.key, it.value) })
+            return ConquestStateView(tick, entityStates, levelMap.barrierMap.map { BarrierTile(it.key, it.value) })
         }
 
     fun move(gameMove: GameMove<ConquestAction>) {
