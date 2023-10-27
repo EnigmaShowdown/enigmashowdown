@@ -41,3 +41,34 @@ class ConquestPlayer(
         return EntityState(id, position, EntityType.PLAYER)
     }
 }
+
+class ConquestCrate(
+    override val id: UUID,
+    world: World,
+) : ConquestEntity {
+
+    val crateBody = world. createBody(
+        BodyDef().apply {
+            type = BodyDef.BodyType.DynamicBody
+        },
+    ).apply {
+        createFixture(
+            FixtureDef().apply {
+                shape = PolygonShape().apply {
+                    setAsBox(0.5f, 0.5f, Vector2.Zero, 0.0f)
+                }
+            },
+        )
+    }
+
+    override val position: Vec2
+        get() = crateBody.position.toVec2()
+
+    override fun teleport(x: Float, y: Float) {
+        crateBody.setTransform(x, y, 0f)
+    }
+
+    override fun toState(): EntityState {
+        return EntityState(id, position, EntityType.CRATE)
+    }
+}
