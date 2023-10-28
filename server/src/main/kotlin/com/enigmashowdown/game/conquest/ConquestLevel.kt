@@ -21,16 +21,14 @@ import kotlin.math.sin
 
 class ConquestLevel(
     val playerIds: Set<UUID>,
-    val crateId: Set<UUID>,
     val conquestLevelInfo: ConquestLevelInfo,
-    val levelMap: LevelMap,
+    val levelMap: LevelMap
 ) {
 
     var tick: Int = 0
 
     val world = World(Vector2.Zero, false)
     val players: List<ConquestPlayer>
-    val crates: List<ConquestCrate>
     val entities: MutableList<ConquestEntity>
 
     private val tempVector = Vector2()
@@ -58,11 +56,10 @@ class ConquestLevel(
         }
 
         players = playerIds.map { ConquestPlayer(it, world) }
-        crates = crateId.map { ConquestCrate(it, world) }
         //entities = players // TODO this line may need to change when we add more entities
         entities = mutableListOf<ConquestEntity>().apply {
             addAll(0, players)
-            addAll(1, crates)
+            add(1, ConquestCrate(UUID.randomUUID(), world))
         }
 
         when (conquestLevelInfo) {
