@@ -22,7 +22,7 @@ import kotlin.math.sin
 class ConquestLevel(
     val playerIds: Set<UUID>,
     val conquestLevelInfo: ConquestLevelInfo,
-    val levelMap: LevelMap
+    val levelMap: LevelMap,
 ) {
 
     var tick: Int = 0
@@ -56,24 +56,19 @@ class ConquestLevel(
         }
 
         players = playerIds.map { ConquestPlayer(it, world) }
-        //entities = players // TODO this line may need to change when we add more entities
+        // entities = players // TODO this line may need to change when we add more entities
         entities = mutableListOf<ConquestEntity>().apply {
-            addAll(0, players)
-            add(1, ConquestCrate(UUID.randomUUID(), world))
+            addAll(players)
+            add(ConquestCrate(UUID.randomUUID(), world))
         }
 
         when (conquestLevelInfo) {
             ConquestLevelInfo.BETA_1 -> {
-                for (player in entities) {
-                    player.teleport(50f, 45f)
-                }
-            }
-        }
-
-        when (conquestLevelInfo) {
-            ConquestLevelInfo.BETA_1 -> {
-                for (crate in entities) {
-                    crate.teleport(45f, 45f)
+                for (entity in entities) {
+                    when (entity) {
+                        is ConquestPlayer -> entity.teleport(50f, 45f)
+                        is ConquestCrate -> entity.teleport(55f, 45.75f)
+                    }
                 }
             }
         }

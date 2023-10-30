@@ -16,7 +16,7 @@ class ConquestCrate(
     world: World,
 ) : ConquestEntity {
 
-    val crateBody = world. createBody(
+    val crateBody = world.createBody(
         BodyDef().apply {
             type = BodyDef.BodyType.DynamicBody
             linearDamping = 1.0f

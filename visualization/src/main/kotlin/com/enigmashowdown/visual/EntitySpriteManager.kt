@@ -117,7 +117,7 @@ class EntitySpriteManager(
                     }
                 }
                 EntityType.CRATE -> {
-                    val image = Image().apply{
+                    val image = Image().apply {
                         setSize(1.0f, 1.0f)
                         setPosition(-0.5f, -0.5f)
                     }
@@ -125,7 +125,7 @@ class EntitySpriteManager(
                         { drawable -> image.drawable = drawable },
                         StillAnimation(
                             renderObject.mainSkin.getDrawable("wooden_crate"),
-                        )
+                        ),
                     ).also { sprite ->
                         sprite.group.addActor(image)
                         stage.addActor(sprite.group)
