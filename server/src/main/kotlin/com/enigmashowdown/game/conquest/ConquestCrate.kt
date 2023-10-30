@@ -2,7 +2,6 @@ package com.enigmashowdown.game.conquest
 
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.badlogic.gdx.physics.box2d.World
@@ -12,14 +11,15 @@ import com.enigmashowdown.util.Vec2
 import com.enigmashowdown.util.toVec2
 import java.util.UUID
 
-class ConquestPlayer(
+class ConquestCrate(
     override val id: UUID,
     world: World,
 ) : ConquestEntity {
 
-    val playerBody = world.createBody(
+    val crateBody = world. createBody(
         BodyDef().apply {
             type = BodyDef.BodyType.DynamicBody
+            linearDamping = 1.0f
         },
     ).apply {
         createFixture(
@@ -32,13 +32,13 @@ class ConquestPlayer(
     }
 
     override val position: Vec2
-        get() = playerBody.position.toVec2()
+        get() = crateBody.position.toVec2()
 
     override fun teleport(x: Float, y: Float) {
-        playerBody.setTransform(x, y, 0f)
+        crateBody.setTransform(x, y, 0f)
     }
 
     override fun toState(): EntityState {
-        return EntityState(id, position, EntityType.PLAYER)
+        return EntityState(id, position, EntityType.CRATE)
     }
 }
