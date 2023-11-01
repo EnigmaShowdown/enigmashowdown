@@ -1,6 +1,6 @@
 package com.enigmashowdown.visual
 
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -16,7 +16,6 @@ import com.enigmashowdown.message.broadcast.LevelStateBroadcast
 import com.enigmashowdown.util.getLogger
 import com.enigmashowdown.util.toVector2
 import com.enigmashowdown.visual.render.RenderObject
-import com.enigmashowdown.visual.render.Renderable
 import com.enigmashowdown.visual.update.Updatable
 import java.util.UUID
 import kotlin.math.max
@@ -48,6 +47,7 @@ private class StillAnimation(
 private class EntitySprite(
     val setDrawable: (Drawable) -> Unit,
     val animation: EntityAnimation,
+    val zIndex: Int = 0,
 ) : Disposable {
     val group = Group()
 
@@ -72,21 +72,6 @@ class EntitySpriteManager(
 ) : Updatable, Disposable {
 
     private val map = mutableMapOf<UUID, EntitySprite>()
-    val debugRenderable = object : Renderable {
-        private val shapeRenderer = ShapeRenderer()
-        override fun render(delta: Float) {
-//            map.values.forEach { sprite ->
-//                sprite.actor.drawDebug(shapeRenderer)
-//            }
-        }
-
-        override fun resize(width: Int, height: Int) {
-        }
-
-        override fun dispose() {
-            shapeRenderer.dispose()
-        }
-    }
 
     private fun findOrInitSprite(id: UUID, entityType: EntityType): EntitySprite {
         return map.computeIfAbsent(id) { _ ->
@@ -101,16 +86,25 @@ class EntitySpriteManager(
                         max(0.1f, 0.3f - entitySpeed / 10f)
                     }
 
+                    val up = renderObject.mainSkin.atlas.findRegions("up").map { TextureRegionDrawable(it) }
+                    val down = renderObject.mainSkin.atlas.findRegions("down").map { TextureRegionDrawable(it) }
+                    val flippedDown = renderObject.mainSkin.atlas.findRegions("down").map { atlasRegion ->
+                        val clonedRegion = AtlasRegion(atlasRegion)
+                        clonedRegion.flip(true, false)
+                        TextureRegionDrawable(clonedRegion)
+                    }
+
                     EntitySprite(
                         { drawable -> image.drawable = drawable },
                         Moving4WayAnimation(
                             AnimationFrames(renderObject.mainSkin.atlas.findRegions("still").map { TextureRegionDrawable(it) }, stillFrameLength),
 
-                            AnimationFrames(renderObject.mainSkin.atlas.findRegions("up").map { TextureRegionDrawable(it) }, movingFrameLength),
-                            AnimationFrames(renderObject.mainSkin.atlas.findRegions("down").map { TextureRegionDrawable(it) }, movingFrameLength),
-                            AnimationFrames(renderObject.mainSkin.atlas.findRegions("up").map { TextureRegionDrawable(it) }, movingFrameLength), // left
-                            AnimationFrames(renderObject.mainSkin.atlas.findRegions("down").map { TextureRegionDrawable(it) }, movingFrameLength), // right
+                            AnimationFrames(up, movingFrameLength),
+                            AnimationFrames(down, movingFrameLength),
+                            AnimationFrames(flippedDown, movingFrameLength), // left
+                            AnimationFrames(down, movingFrameLength), // right
                         ),
+                        zIndex = 5,
                     ).also { sprite ->
                         sprite.group.addActor(image)
                         stage.addActor(sprite.group)
@@ -144,6 +138,7 @@ class EntitySpriteManager(
 
         val position = if (entity != null && nextEntity != null) entity.position.toVector2().lerp(nextEntity.position.toVector2(), percent) else anyEntity.position.toVector2()
         sprite.group.setPosition(position.x, position.y)
+        sprite.group.zIndex = sprite.zIndex // we have to put this here because if we call setZIndex prematurely, it won't be set correctly
 
         when (val animation = sprite.animation) {
             is Moving4WayAnimation -> {

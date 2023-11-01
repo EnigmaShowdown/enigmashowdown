@@ -89,7 +89,7 @@ class ConquestLevel(
             val action: ConquestAction? = gameMove.actions[player.id]
             if (action != null) {
                 action.moveAction?.let { moveAction ->
-                    val speed = max(0.0, min(1.0, moveAction.speed))
+                    val speed = max(0.0, min(player.currentMaxSpeed, moveAction.speed))
                     val x = cos(moveAction.directionRadians)
                     val y = sin(moveAction.directionRadians)
 
