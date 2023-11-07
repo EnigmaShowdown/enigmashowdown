@@ -40,14 +40,13 @@ private class Moving4WayAnimation(
     val right: AnimationFrames,
 ) : EntityAnimation
 
-private class StillAnimation(
-    val still: Drawable,
+private class BasicAnimation(
+    val frames: AnimationFrames,
 ) : EntityAnimation
 
 private class EntitySprite(
     val setDrawable: (Drawable) -> Unit,
     val animation: EntityAnimation,
-    val zIndex: Int = 0,
 ) : Disposable {
     val group = Group()
 
@@ -104,10 +103,8 @@ class EntitySpriteManager(
                             AnimationFrames(flippedDown, movingFrameLength), // left
                             AnimationFrames(down, movingFrameLength), // right
                         ),
-                        zIndex = 5,
                     ).also { sprite ->
                         sprite.group.addActor(image)
-                        stage.addActor(sprite.group)
                     }
                 }
                 EntityType.CRATE -> {
@@ -117,15 +114,32 @@ class EntitySpriteManager(
                     }
                     EntitySprite(
                         { drawable -> image.drawable = drawable },
-                        StillAnimation(
-                            renderObject.mainSkin.getDrawable("wooden_crate"),
+                        BasicAnimation(
+                            AnimationFrames(
+                                listOf(renderObject.mainSkin.getDrawable("wooden_crate")),
+                            ) { 1.0f }, // the frame length does not matter, since there is only one frame
                         ),
                     ).also { sprite ->
                         sprite.group.addActor(image)
-                        stage.addActor(sprite.group)
                     }
                 }
-                else -> error("Unsupported entity type! Please add this entity type to the list of entity types that this function returns null for!")
+                EntityType.FLAG -> {
+                    val image = Image().apply {
+                        setSize(1.0f, 2.0f)
+                        setPosition(-0.5f, -0.5f) // set the position relative to the group of this entity (remember, the group is what moves, not this image)
+                    }
+                    val regions = renderObject.mainSkin.atlas.findRegions("flag").map { TextureRegionDrawable(it) }
+                    val frames = regions + regions.subList(1, regions.size - 1).reversed() // this makes it cycle in a "bounce"
+                    EntitySprite(
+                        { drawable -> image.drawable = drawable },
+                        BasicAnimation(
+                            AnimationFrames(frames) { 0.2f },
+                        ),
+                    ).also { sprite ->
+                        sprite.group.addActor(image)
+                    }
+                }
+//                else -> error("Unsupported entity type! Please add this entity type to the list of entity types that this function returns null for!")
             }
         }
     }
@@ -137,41 +151,40 @@ class EntitySpriteManager(
         val sprite = findOrInitSprite(id, entityType) ?: return // do nothing if sprite is null
 
         val position = if (entity != null && nextEntity != null) entity.position.toVector2().lerp(nextEntity.position.toVector2(), percent) else anyEntity.position.toVector2()
+        stage.addActor(sprite.group)
         sprite.group.setPosition(position.x, position.y)
-        sprite.group.zIndex = sprite.zIndex // we have to put this here because if we call setZIndex prematurely, it won't be set correctly
 
-        when (val animation = sprite.animation) {
+        val changeInPosition = if (entity != null && nextEntity != null) nextEntity.position.toVector2().sub(entity.position.toVector2()) else Vector2.Zero
+        val velocity = Vector2(changeInPosition.x / EnigmaShowdownConstants.TICK_PERIOD_SECONDS, changeInPosition.y / EnigmaShowdownConstants.TICK_PERIOD_SECONDS)
+        val speed = velocity.len()
+        val desiredAnimationFrames = when (val animation = sprite.animation) {
             is Moving4WayAnimation -> {
-                val timeSeconds = (tick + percent) / EnigmaShowdownConstants.TICKS_PER_SECOND
-
-                val changeInPosition = if (entity != null && nextEntity != null) nextEntity.position.toVector2().sub(entity.position.toVector2()) else Vector2.Zero
-                val velocity = Vector2(changeInPosition.x / EnigmaShowdownConstants.TICK_PERIOD_SECONDS, changeInPosition.y / EnigmaShowdownConstants.TICK_PERIOD_SECONDS)
-                val speed = velocity.len()
                 val angleDegrees = velocity.angleDeg() // in the range 0-360
-                val desiredAnimationFrames = when {
+                when {
                     speed < 0.5f -> animation.still
                     angleDegrees < 45 || angleDegrees > (360 - 45) -> animation.right
                     angleDegrees < (90 + 45) -> animation.up
                     angleDegrees < (180 + 45) -> animation.left
                     else -> animation.down
                 }
-                if (sprite.currentFrames != desiredAnimationFrames) {
-                    sprite.currentFrameIndex = 0
-                    sprite.currentFrames = desiredAnimationFrames
-                    sprite.frameEndSeconds = desiredAnimationFrames.frameLengthEquation.getFrameLengthSeconds(speed)
-                }
-                if (sprite.frameEndSeconds < timeSeconds) {
-                    sprite.currentFrameIndex = (sprite.currentFrameIndex + 1) % desiredAnimationFrames.frames.size
-                    sprite.frameEndSeconds = timeSeconds + desiredAnimationFrames.frameLengthEquation.getFrameLengthSeconds(speed)
-                }
-                val currentFrame = desiredAnimationFrames.frames[sprite.currentFrameIndex]
-                sprite.setDrawable(currentFrame)
             }
-
-            is StillAnimation -> {
-                sprite.setDrawable(animation.still)
+            is BasicAnimation -> {
+                animation.frames
             }
         }
+
+        val timeSeconds = (tick + percent) / EnigmaShowdownConstants.TICKS_PER_SECOND
+        if (sprite.currentFrames != desiredAnimationFrames) {
+            sprite.currentFrameIndex = 0
+            sprite.currentFrames = desiredAnimationFrames
+            sprite.frameEndSeconds = desiredAnimationFrames.frameLengthEquation.getFrameLengthSeconds(speed)
+        }
+        if (sprite.frameEndSeconds < timeSeconds) {
+            sprite.currentFrameIndex = (sprite.currentFrameIndex + 1) % desiredAnimationFrames.frames.size
+            sprite.frameEndSeconds = timeSeconds + desiredAnimationFrames.frameLengthEquation.getFrameLengthSeconds(speed)
+        }
+        val currentFrame = desiredAnimationFrames.frames[sprite.currentFrameIndex]
+        sprite.setDrawable(currentFrame)
     }
 
     override fun update(delta: Float, previousState: LevelStateBroadcast, currentState: LevelStateBroadcast, percent: Float) {
@@ -184,6 +197,8 @@ class EntitySpriteManager(
         for (id in allEntityIds) {
             updateEntity(stateView.tick, percent, id, entityMap[id], nextEntityMap[id])
         }
+        // Actors on the bottom should be in front
+        stage.actors.asSequence().sortedByDescending { actor -> actor.y }.forEach { actor -> actor.toFront() }
 
         // For any entity that is removed, let's remove that entity from our map
         map.entries.iterator().let { iterator ->
