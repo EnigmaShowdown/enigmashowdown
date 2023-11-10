@@ -136,9 +136,29 @@ class GameScreen(
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
             // TODO remove this once we properly implement level selection
             // This will complete in the background. We won't check for a successful response. We'll just assume it's fine.
-            requestClient.send(LevelRequest(ConquestLevelInfo.BETA_1.levelId))
+            requestClient.send(LevelRequest(ConquestLevelInfo.LEVEL_1.levelId))
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
+            // TODO remove this once we properly implement level selection
+            // This will complete in the background. We won't check for a successful response. We'll just assume it's fine.
+            requestClient.send(LevelRequest(ConquestLevelInfo.LEVEL_2.levelId))
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
+            // TODO remove this once we properly implement level selection
+            // This will complete in the background. We won't check for a successful response. We'll just assume it's fine.
+            requestClient.send(LevelRequest(ConquestLevelInfo.LEVEL_3.levelId))
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
+            // TODO remove this once we properly implement level selection
+            // This will complete in the background. We won't check for a successful response. We'll just assume it's fine.
+            requestClient.send(LevelRequest(ConquestLevelInfo.LEVEL_4.levelId))
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
+            // TODO remove this once we properly implement level selection
+            // This will complete in the background. We won't check for a successful response. We'll just assume it's fine.
+            requestClient.send(LevelRequest(ConquestLevelInfo.BETA_1.levelId))
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
             // TODO test this with an actual player client
             // This is a hack to tell the server that a player just connected
             requestClient.send(ConnectRequest(ClientType.PLAYER)).handleAsync { message, throwable ->

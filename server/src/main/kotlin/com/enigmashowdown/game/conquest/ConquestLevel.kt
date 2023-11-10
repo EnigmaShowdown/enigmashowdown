@@ -64,6 +64,27 @@ class ConquestLevel(
                     player.teleport(50f, 50f)
                 }
             }
+
+            ConquestLevelInfo.LEVEL_1 -> {
+                for (player in entities) {
+                    player.teleport(39f, 50f)
+                }
+            }
+            ConquestLevelInfo.LEVEL_2 -> {
+                for (player in entities) {
+                    player.teleport(41f, 44f)
+                }
+            }
+            ConquestLevelInfo.LEVEL_3 -> {
+                for (player in entities) {
+                    player.teleport(41f, 72f)
+                }
+            }
+            ConquestLevelInfo.LEVEL_4 -> {
+                for (player in entities) {
+                    player.teleport(39f, 50f)
+                }
+            }
         }
     }
 
