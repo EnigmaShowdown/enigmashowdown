@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import com.badlogic.gdx.utils.viewport.ScalingViewport
+import com.enigmashowdown.EnigmaShowdownConstants
 import com.enigmashowdown.util.getLogger
 import com.enigmashowdown.visual.render.RenderObject
 import com.enigmashowdown.visual.render.Renderable
@@ -72,7 +73,19 @@ class TitleScreen(
             screenChanger.change(newScreen)
         }
         if (connectButton.isPressed) {
-            logger.info("join clicked")
+            val addressParts = connectAddressField.text.split(":") // TODO this doesn't support IPv6 addresses
+            val host = addressParts[0]
+            val port = if (addressParts.size == 2) addressParts[1].toIntOrNull() else EnigmaShowdownConstants.PORT_SERVER
+            if (host.isEmpty() || port == null) {
+                logger.info("Invalid address!")
+            } else {
+                val newScreen = connectToServer(screenChanger, renderObject, host, port)
+                if (newScreen != null) {
+                    screenChanger.change(newScreen)
+                } else {
+                    logger.info("Could not connect to server. More info in previous log messages")
+                }
+            }
         }
 
         renderable.render(delta)

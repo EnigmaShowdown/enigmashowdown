@@ -1,6 +1,7 @@
 package com.enigmashowdown.visual
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -15,6 +16,7 @@ import com.enigmashowdown.visual.render.DisposeRenderable
 import com.enigmashowdown.visual.render.RenderObject
 import com.enigmashowdown.visual.render.Renderable
 import com.enigmashowdown.visual.render.RenderableMultiplexer
+import com.enigmashowdown.visual.render.RenderableReference
 import com.enigmashowdown.visual.render.StageRenderable
 import com.enigmashowdown.visual.render.TiledMapRenderable
 import com.enigmashowdown.visual.render.ViewportResizerRenderable
@@ -29,13 +31,14 @@ private const val VIEW_HEIGHT = 20f
  * This should be used to contain all map rendering logic and any logic for the actual visualization of the state of the game
  */
 class LevelVisualization(
-    renderObject: RenderObject,
+    private val renderObject: RenderObject,
     map: LevelMap,
 ) : Updatable {
     /** The size in pixels of a single tile */
     private val tileSize = map.tileSize
 
     private val levelCountdown = LevelCountdown(renderObject)
+    private var endDisplay: LevelEndDisplay? = null
     private val entitySpriteManager: EntitySpriteManager
 
     val renderable: Renderable
@@ -63,6 +66,7 @@ class LevelVisualization(
                 entitySpriteManager.debugRenderable,
                 TiledMapRenderable(tiledMap, tiledCamera, intArrayOf(map.topLayerIndex)),
                 levelCountdown.renderable,
+                RenderableReference { endDisplay?.renderable },
 
                 DisposeRenderable { map.tiledMap.dispose() },
                 DisposeRenderable(entitySpriteManager::dispose),
@@ -85,6 +89,13 @@ class LevelVisualization(
 
         levelCountdown.update(delta, previousState, currentState, percent)
         entitySpriteManager.update(delta, previousState, currentState, percent)
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+            if (endDisplay == null) {
+                endDisplay = LevelEndDisplay(renderObject, previousState.gameStateView.tick, 0, 0, 0)
+            } else {
+                endDisplay = null
+            }
+        }
     }
     private fun averagePlayerPosition(state: ConquestStateView): Vector2 {
         if (state.entities.isEmpty()) {

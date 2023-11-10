@@ -29,7 +29,7 @@ class ConquestLevel(
 
     val world = World(Vector2.Zero, false)
     val players: List<ConquestPlayer>
-    val entities: List<ConquestEntity>
+    val entities: MutableList<ConquestEntity>
 
     private val tempVector = Vector2()
 
@@ -56,12 +56,19 @@ class ConquestLevel(
         }
 
         players = playerIds.map { ConquestPlayer(it, world) }
-        entities = players // TODO this line may need to change when we add more entities
+        // entities = players // TODO this line may need to change when we add more entities
+        entities = mutableListOf<ConquestEntity>().apply {
+            addAll(players)
+            add(ConquestCrate(UUID.randomUUID(), world))
+        }
 
         when (conquestLevelInfo) {
             ConquestLevelInfo.BETA_1 -> {
-                for (player in entities) {
-                    player.teleport(50f, 50f)
+                for (entity in entities) {
+                    when (entity) {
+                        is ConquestPlayer -> entity.teleport(50f, 45f)
+                        is ConquestCrate -> entity.teleport(55f, 45.75f)
+                    }
                 }
             }
 

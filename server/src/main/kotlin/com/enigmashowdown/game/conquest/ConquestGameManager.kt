@@ -63,6 +63,7 @@ class ConquestGameManager : GameManager<ConquestStateView, ConquestAction> {
 
     override val players: Set<UUID>?
         get() = currentLevel?.playerIds
+
     override val gameStateView: ConquestStateView?
         get() = currentLevel?.gameStateView
 

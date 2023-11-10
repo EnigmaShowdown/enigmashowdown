@@ -41,6 +41,10 @@ private class Moving4WayAnimation(
     val right: AnimationFrames,
 ) : EntityAnimation
 
+private class StillAnimation(
+    val still: Drawable,
+) : EntityAnimation
+
 private class EntitySprite(
     val setDrawable: (Drawable) -> Unit,
     val animation: EntityAnimation,
@@ -84,10 +88,7 @@ class EntitySpriteManager(
         }
     }
 
-    private fun findOrInitSprite(id: UUID, entityType: EntityType): EntitySprite? {
-        if (entityType != EntityType.PLAYER) { // currently player is the only supported type at the moment
-            return null
-        }
+    private fun findOrInitSprite(id: UUID, entityType: EntityType): EntitySprite {
         return map.computeIfAbsent(id) { _ ->
             when (entityType) {
                 EntityType.PLAYER -> {
@@ -109,6 +110,21 @@ class EntitySpriteManager(
                             AnimationFrames(renderObject.mainSkin.atlas.findRegions("down").map { TextureRegionDrawable(it) }, movingFrameLength),
                             AnimationFrames(renderObject.mainSkin.atlas.findRegions("up").map { TextureRegionDrawable(it) }, movingFrameLength), // left
                             AnimationFrames(renderObject.mainSkin.atlas.findRegions("down").map { TextureRegionDrawable(it) }, movingFrameLength), // right
+                        ),
+                    ).also { sprite ->
+                        sprite.group.addActor(image)
+                        stage.addActor(sprite.group)
+                    }
+                }
+                EntityType.CRATE -> {
+                    val image = Image().apply {
+                        setSize(1.0f, 1.0f)
+                        setPosition(-0.5f, -0.5f)
+                    }
+                    EntitySprite(
+                        { drawable -> image.drawable = drawable },
+                        StillAnimation(
+                            renderObject.mainSkin.getDrawable("wooden_crate"),
                         ),
                     ).also { sprite ->
                         sprite.group.addActor(image)
@@ -155,6 +171,10 @@ class EntitySpriteManager(
                 }
                 val currentFrame = desiredAnimationFrames.frames[sprite.currentFrameIndex]
                 sprite.setDrawable(currentFrame)
+            }
+
+            is StillAnimation -> {
+                sprite.setDrawable(animation.still)
             }
         }
     }

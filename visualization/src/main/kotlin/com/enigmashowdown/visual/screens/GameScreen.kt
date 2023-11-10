@@ -17,6 +17,7 @@ import com.enigmashowdown.message.broadcast.LevelStateBroadcast
 import com.enigmashowdown.message.broadcast.TestMessage
 import com.enigmashowdown.message.request.ConnectRequest
 import com.enigmashowdown.message.request.LevelRequest
+import com.enigmashowdown.message.response.ConnectResponse
 import com.enigmashowdown.server.GameServer
 import com.enigmashowdown.server.ZeroMqBroadcastManager
 import com.enigmashowdown.server.ZeroMqServerManager
@@ -30,6 +31,9 @@ import com.enigmashowdown.visual.render.RenderableReference
 import com.enigmashowdown.visual.render.ResetRenderable
 import org.zeromq.ZContext
 import java.time.Duration
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 import kotlin.math.max
 import kotlin.math.min
 
@@ -61,6 +65,42 @@ fun hostServer(screenChanger: ScreenChanger, renderObject: RenderObject): GameSc
         broadcastManager.close()
         gameServer.close()
         serverManager.close()
+        broadcastReceiver.close()
+        requestClient.close()
+    }
+
+    return GameScreen(renderObject, onDispose, requestClient, broadcastReceiver)
+}
+
+fun connectToServer(screenChanger: ScreenChanger, renderObject: RenderObject, host: String, port: Int): GameScreen? {
+    val mapper = createDefaultMapper()
+    val context = ZContext()
+
+    val requestClient = ZeroMqRequestClient(mapper, context, host, port)
+    val responseFuture = requestClient.send(ConnectRequest(ClientType.VISUALIZATION))
+    // TODO do this in a separate thread on a loading screen - (this blocks)
+    // Also, we should have a way to actually notify the player of what error has occurred
+    val response = try {
+        responseFuture.get(1000, TimeUnit.MILLISECONDS)
+    } catch (ex: TimeoutException) {
+        GameScreen.logger.error("Got timeout for host:port = {}:{}", host, port)
+        return null
+    } catch (ex: ExecutionException) {
+        GameScreen.logger.error("Got error", ex)
+        return null
+    }
+    if (response !is ConnectResponse) {
+        GameScreen.logger.error("Unexpected response! response: {}", response)
+        return null
+    }
+    // NOTE: We ignore response.uuid for now, but if in the future we actually are required to send a keepalive or tell the server our UUID, we will need to pass it in
+
+    val broadcastReceiver = ZeroMqBroadcastReceiver(mapper, context, host, response.broadcastPort, response.subscribeTopic)
+
+    // Start perform initialization logic for each service
+    broadcastReceiver.start()
+
+    val onDispose = {
         broadcastReceiver.close()
         requestClient.close()
     }
@@ -197,6 +237,6 @@ class GameScreen(
     }
 
     companion object {
-        private val logger = getLogger()
+        val logger = getLogger()
     }
 }
