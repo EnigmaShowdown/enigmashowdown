@@ -30,6 +30,8 @@ class ConquestPlayer(
             },
         )
     }
+    val currentMaxSpeed: Double
+        get() = 10.0
 
     override val position: Vec2
         get() = playerBody.position.toVec2()

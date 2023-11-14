@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.enigmashowdown.game.conquest.map.LevelMap
 import com.enigmashowdown.game.conquest.state.ConquestStateView
+import com.enigmashowdown.game.conquest.state.EntityType
 import com.enigmashowdown.message.broadcast.LevelStateBroadcast
 import com.enigmashowdown.util.add
 import com.enigmashowdown.util.getLogger
@@ -63,7 +64,6 @@ class LevelVisualization(
                 ViewportResizerRenderable(tiledViewport), // we need a resizer for tiledViewport because it is not managed by a stage like stateViewport is
                 TiledMapRenderable(tiledMap, tiledCamera, intArrayOf(map.backgroundLayerIndex, map.floorLayerIndex, map.foregroundLayerIndex)),
                 StageRenderable(stage),
-                entitySpriteManager.debugRenderable,
                 TiledMapRenderable(tiledMap, tiledCamera, intArrayOf(map.topLayerIndex)),
                 levelCountdown.renderable,
                 RenderableReference { endDisplay?.renderable },
@@ -98,16 +98,18 @@ class LevelVisualization(
         }
     }
     private fun averagePlayerPosition(state: ConquestStateView): Vector2 {
-        if (state.entities.isEmpty()) {
+        var playerCount = 0
+        val playerLocationSum = Vector2()
+        for (entity in state.entities) {
+            if (entity.entityType == EntityType.PLAYER) {
+                playerLocationSum.add(entity.position)
+                playerCount++
+            }
+        }
+        if (playerCount == 0) {
             // We don't ever expect players to be empty, but in the off chance that it is, we'll just return this.
             //   If in the future this is a case we need to properly handle, we may consider giving the level a "default camera position" or just not move the camera at all in this case
             return Vector2()
-        }
-        var playerCount = 0
-        val playerLocationSum = Vector2()
-        for (player in state.entities) {
-            playerLocationSum.add(player.position)
-            playerCount++
         }
         return playerLocationSum.set(playerLocationSum.x / playerCount, playerLocationSum.y / playerCount)
     }
