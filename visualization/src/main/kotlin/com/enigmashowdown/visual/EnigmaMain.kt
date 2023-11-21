@@ -10,6 +10,8 @@ import com.enigmashowdown.visual.render.RenderObject
 import com.enigmashowdown.visual.screens.TitleScreen
 
 class EnigmaMain : Game() {
+    private val fullscreenHandler = FullscreenHandler()
+
     private lateinit var renderObject: RenderObject
 
     private var nextScreen: Screen? = null
@@ -35,6 +37,7 @@ class EnigmaMain : Game() {
         val delta = Gdx.graphics.deltaTime
         screen?.render(delta)
 
+        fullscreenHandler.update()
         Gdx.graphics.setTitle("Enigma Showdown - FPS: ${Gdx.graphics.framesPerSecond}")
     }
 

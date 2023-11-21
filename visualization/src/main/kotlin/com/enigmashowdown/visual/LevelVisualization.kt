@@ -89,7 +89,15 @@ class LevelVisualization(
 
         levelCountdown.update(delta, previousState, currentState, percent)
         entitySpriteManager.update(delta, previousState, currentState, percent)
-        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) {
+
+        val gameState = (previousState.gameStateView as ConquestStateView)
+        if (endDisplay == null && gameState.levelEndStatistics.isNotEmpty()) {
+            require(gameState.levelEndStatistics.size == 1) { "We currently don't have logic implemented for multiple level end statistics" }
+            val statistic = gameState.levelEndStatistics[0]
+            // TODO use statistic.status, which will tell us if the level was failed
+            endDisplay = LevelEndDisplay(renderObject, statistic.tickEndedOn, 0, 0, 0)
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) { // TODO we'll want to remove this at some point
             if (endDisplay == null) {
                 endDisplay = LevelEndDisplay(renderObject, previousState.gameStateView.tick, 0, 0, 0)
             } else {
