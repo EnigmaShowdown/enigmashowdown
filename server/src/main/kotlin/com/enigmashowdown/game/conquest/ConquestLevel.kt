@@ -66,6 +66,7 @@ class ConquestLevel(
             addAll(players)
             add(ConquestCrate(UUID.randomUUID(), world))
             add(ConquestFlag(UUID.randomUUID(), world))
+            add(ConquestPressurePlate(UUID.randomUUID(), world))
         }
 
         when (conquestLevelInfo) {
@@ -75,6 +76,7 @@ class ConquestLevel(
                         is ConquestPlayer -> entity.teleport(50f, 45f)
                         is ConquestCrate -> entity.teleport(55f, 45.75f)
                         is ConquestFlag -> entity.teleport(67f, 48f)
+                        is ConquestPressurePlate -> entity.teleport(60f, 45.75f)
                     }
                 }
             }
