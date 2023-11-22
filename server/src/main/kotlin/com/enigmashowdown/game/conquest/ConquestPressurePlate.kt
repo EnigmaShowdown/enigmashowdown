@@ -5,7 +5,6 @@ import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.badlogic.gdx.physics.box2d.World
 import com.enigmashowdown.game.conquest.collision.CollisionCategory
-import com.enigmashowdown.game.conquest.collision.FlagUserData
 import com.enigmashowdown.game.conquest.collision.PressurePlateUserData
 import com.enigmashowdown.game.conquest.state.EntityState
 import com.enigmashowdown.game.conquest.state.EntityType
