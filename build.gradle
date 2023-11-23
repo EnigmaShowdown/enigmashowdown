@@ -95,7 +95,8 @@ subprojects {
                 groupId = "${group}"
                 artifactId = "${project.name}"
                 // RELEASE_VERSION is set in release-publish.yml
-                version = System.getenv("RELEASE_VERSION")
+                String releaseVersion = System.getenv("RELEASE_VERSION")
+                version = (releaseVersion == null || releaseVersion.isEmpty()) ? "SNAPSHOT" : releaseVersion
 
                 from project.components.java
             }
