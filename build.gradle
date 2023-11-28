@@ -94,25 +94,24 @@ subprojects {
                 // We override the publication identity to automatically give group and artifact IDs to each project
                 groupId = "${group}"
                 artifactId = "${project.name}"
-                // RELEASE_VERSION is set in release-publish.yml
+                // RELEASE_VERSION used to be set in release-publish.yml, but now that file is deleted.
+                //   I'm going to keep this code here so that if you wanted to, you could override the version.
+                //   However, jitpack won't actually care what the version or groupId is set to
                 String releaseVersion = System.getenv("RELEASE_VERSION")
                 version = (releaseVersion == null || releaseVersion.isEmpty()) ? "SNAPSHOT" : releaseVersion
 
                 from project.components.java
             }
         }
-        // https://docs.github.com/en/actions/publishing-packages/publishing-java-packages-with-gradle#publishing-packages-to-github-packages
         repositories {
-            maven {
-                name = "GitHubPackages"
-                url = "https://maven.pkg.github.com/EnigmaShowdown/enigmashowdown"
-                credentials {
-                    // GITHUB_ACTOR is an environment variable visible to pretty much everything
-                    username = System.getenv("GITHUB_ACTOR")
-                    // In our publish step, we explicitly set this environment variable based on the actual secret value
-                    password = System.getenv("GITHUB_TOKEN")
-                }
-            }
+            // If we decide to publish to GitHub packages in the future, we may refer to
+            //   https://docs.github.com/en/actions/publishing-packages/publishing-java-packages-with-gradle#publishing-packages-to-github-packages
+            // If we decide to publish to Maven Central in the future, we may refer to:
+            //   https://docs.github.com/en/actions/publishing-packages/publishing-java-packages-with-gradle#publishing-packages-to-the-maven-central-repository
+            //   https://central.sonatype.org/publish/publish-guide/
+            // We don't have to explicitly declare JitPack as a maven repository here because JitPack will build it.
+
+            // TODO maven central is the long term goal, but for now JitPack will work just fine
         }
     }
 }
