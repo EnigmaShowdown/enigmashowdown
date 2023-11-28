@@ -67,29 +67,42 @@ class ConquestLevel(
                 for (entity in entities) {
                     when (entity) {
                         is ConquestPlayer -> entity.teleport(50f, 45f)
-                        is ConquestCrate -> entity.teleport(55f, 45.75f)
+                        //is ConquestCrate -> entity.teleport(55f, 45.75f)
                     }
                 }
             }
 
             ConquestLevelInfo.LEVEL_1 -> {
-                for (player in entities) {
-                    player.teleport(39f, 50f)
+                for (entity in entities) {
+                    when (entity) {
+                        is ConquestPlayer -> entity.teleport(39f, 50f)
+                        // TODO Level 1 has no crate in the level design, but needs a crate to function, fix that
+                        is ConquestCrate -> entity.teleport(55f, 50f)
+                    }
                 }
             }
             ConquestLevelInfo.LEVEL_2 -> {
-                for (player in entities) {
-                    player.teleport(41f, 44f)
+                for (entity in entities) {
+                    when (entity) {
+                        is ConquestPlayer -> entity.teleport(41f, 44f)
+                        is ConquestCrate -> entity.teleport(55f, 44f)
+                    }
                 }
             }
             ConquestLevelInfo.LEVEL_3 -> {
-                for (player in entities) {
-                    player.teleport(41f, 72f)
+                for (entity in entities) {
+                    when (entity) {
+                        is ConquestPlayer -> entity.teleport(41f, 72f)
+                        is ConquestCrate -> entity.teleport(55f, 72f)
+                    }
                 }
             }
             ConquestLevelInfo.LEVEL_4 -> {
-                for (player in entities) {
-                    player.teleport(39f, 50f)
+                for (entity in entities) {
+                    when (entity) {
+                        is ConquestPlayer -> entity.teleport(39f, 50f)
+                        is ConquestCrate -> entity.teleport(55f, 50f)
+                    }
                 }
             }
         }
