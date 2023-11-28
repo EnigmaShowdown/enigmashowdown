@@ -67,7 +67,7 @@ class ConquestLevel(
                 for (entity in entities) {
                     when (entity) {
                         is ConquestPlayer -> entity.teleport(50f, 45f)
-                        is ConquestCrate -> entity.teleport(55f, 45.75f)
+                        //is ConquestCrate -> entity.teleport(55f, 45.75f)
                     }
                 }
             }
