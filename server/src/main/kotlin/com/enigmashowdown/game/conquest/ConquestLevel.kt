@@ -7,10 +7,13 @@ import com.badlogic.gdx.physics.box2d.World
 import com.enigmashowdown.EnigmaShowdownConstants
 import com.enigmashowdown.game.GameMove
 import com.enigmashowdown.game.conquest.action.ConquestAction
+import com.enigmashowdown.game.conquest.collision.ConquestContactListener
 import com.enigmashowdown.game.conquest.map.ConquestLevelInfo
 import com.enigmashowdown.game.conquest.map.LevelMap
 import com.enigmashowdown.game.conquest.state.BarrierTile
 import com.enigmashowdown.game.conquest.state.ConquestStateView
+import com.enigmashowdown.game.conquest.state.LevelEndStatistic
+import com.enigmashowdown.game.conquest.state.LevelEndStatus
 import com.enigmashowdown.game.conquest.util.ShapeConstants
 import com.enigmashowdown.util.getLogger
 import java.util.UUID
@@ -30,10 +33,12 @@ class ConquestLevel(
     val world = World(Vector2.Zero, false)
     val players: List<ConquestPlayer>
     val entities: MutableList<ConquestEntity>
+    val levelEndStatistics = mutableListOf<LevelEndStatistic>()
 
     private val tempVector = Vector2()
 
     init {
+        world.setContactListener(ConquestContactListener())
         for ((mapCoordinate, barrierType) in levelMap.barrierMap) {
             world.createBody(
                 BodyDef().apply {
@@ -60,6 +65,7 @@ class ConquestLevel(
         entities = mutableListOf<ConquestEntity>().apply {
             addAll(players)
             add(ConquestCrate(UUID.randomUUID(), world))
+            add(ConquestFlag(UUID.randomUUID(), world))
         }
 
         when (conquestLevelInfo) {
@@ -68,6 +74,7 @@ class ConquestLevel(
                     when (entity) {
                         is ConquestPlayer -> entity.teleport(50f, 45f)
                         is ConquestCrate -> entity.teleport(55f, 45.75f)
+                        is ConquestFlag -> entity.teleport(67f, 48f)
                     }
                 }
             }
@@ -79,11 +86,11 @@ class ConquestLevel(
             val entityStates = entities.map { entity ->
                 entity.toState()
             }
-            return ConquestStateView(tick, entityStates, levelMap.barrierMap.map { BarrierTile(it.key, it.value) })
+            return ConquestStateView(tick, entityStates, levelMap.barrierMap.map { BarrierTile(it.key, it.value) }, levelEndStatistics)
         }
 
     fun move(gameMove: GameMove<ConquestAction>) {
-        logger.info("On level tick: {} moves are: {}", tick, gameMove)
+//        logger.info("On level tick: {} moves are: {}", tick, gameMove)
 
         for (player in players) {
             val action: ConquestAction? = gameMove.actions[player.id]
@@ -94,13 +101,31 @@ class ConquestLevel(
                     val y = sin(moveAction.directionRadians)
 
                     player.playerBody.linearVelocity = tempVector.set((x * speed).toFloat(), (y * speed).toFloat())
-                    logger.info("x: $x, y: $y, current player position: ${player.playerBody.position}")
+//                    logger.info("x: $x, y: $y, current player position: ${player.playerBody.position}")
                 }
             }
         }
         // in a 60fps game, you typically do velocityIterations=6 and positionIterations=2
         //   So, for 10tps, just multiply those by 6
         world.step(EnigmaShowdownConstants.TICK_PERIOD_SECONDS, 36, 12)
+
+        for (player in players) {
+            if (player.numberOfFlagsBeingTouched > 0) {
+                if (levelEndStatistics.none { levelEndStatistic -> levelEndStatistic.playerId == player.id }) {
+                    levelEndStatistics.add(
+                        LevelEndStatistic(
+                            player.id,
+                            LevelEndStatus.COMPLETE,
+                            tick,
+                            // TODO populate these statistic field with non-zero values
+                            0,
+                            0,
+                            0,
+                        ),
+                    )
+                }
+            }
+        }
 
         tick++
     }
