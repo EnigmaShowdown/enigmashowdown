@@ -31,13 +31,18 @@ import com.enigmashowdown.visual.render.RenderableReference
 import com.enigmashowdown.visual.render.ResetRenderable
 import org.zeromq.ZContext
 import java.time.Duration
+import java.util.UUID
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 import kotlin.math.max
 import kotlin.math.min
 
-fun hostServer(screenChanger: ScreenChanger, renderObject: RenderObject): GameScreen {
+fun hostServer(
+    screenChanger: ScreenChanger,
+    renderObject: RenderObject,
+    levelSelectionID: UUID = ConquestLevelInfo.LEVEL_1.levelId,
+): GameScreen {
     val mapper = createDefaultMapper()
     val context = ZContext()
     // TODO allow user to change port this is hosted on
@@ -54,6 +59,7 @@ fun hostServer(screenChanger: ScreenChanger, renderObject: RenderObject): GameSc
     // TODO make this broadcast receiver communication through a different way (inproc maybe)
     val broadcastReceiver = ZeroMqBroadcastReceiver(mapper, context, "localhost", broadcastPort, EnigmaShowdownConstants.SUBSCRIBE_TOPIC_ALL)
     val requestClient = ZeroMqRequestClient(mapper, context, "localhost", serverPort)
+    requestClient.send(LevelRequest(levelSelectionID))
 
     // Start perform initialization logic for each service
     broadcastManager.start()

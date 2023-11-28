@@ -69,7 +69,7 @@ class TitleScreen(
         uiStage.act(delta)
 
         if (hostButton.isPressed) {
-            val newScreen = hostServer(screenChanger, renderObject)
+            val newScreen = LevelSelectScreen(screenChanger, renderObject)
             screenChanger.change(newScreen)
         }
         if (connectButton.isPressed) {
