@@ -9,8 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
-import com.badlogic.gdx.utils.Scaling
-import com.badlogic.gdx.utils.viewport.ScalingViewport
+import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.enigmashowdown.EnigmaShowdownConstants
 import com.enigmashowdown.visual.render.RenderObject
 import com.enigmashowdown.visual.render.Renderable
@@ -34,7 +33,7 @@ class LevelEndDisplay(
     private val complete: Actor
 
     init {
-        stage = Stage(ScalingViewport(Scaling.fit, 1000f, 800f), renderObject.batch)
+        stage = Stage(ExtendViewport(1000f, 800f), renderObject.batch)
         val textButtonStyle = renderObject.uiSkin.get(TextButton.TextButtonStyle::class.java).let {
             TextButton.TextButtonStyle(it).apply {
                 over = down

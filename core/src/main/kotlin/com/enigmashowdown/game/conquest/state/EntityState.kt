@@ -6,6 +6,7 @@ import java.util.UUID
 enum class EntityType {
     PLAYER,
     CRATE,
+    FLAG,
 }
 
 data class EntityState(
