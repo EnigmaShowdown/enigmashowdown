@@ -1,15 +1,18 @@
 package com.enigmashowdown.client.framework
 
 import com.enigmashowdown.ClientType
+import com.enigmashowdown.EnigmaShowdownConstants
 import com.enigmashowdown.client.ZeroMqBroadcastReceiver
 import com.enigmashowdown.client.ZeroMqRequestClient
 import com.enigmashowdown.message.broadcast.LevelStateBroadcast
 import com.enigmashowdown.message.request.ConnectRequest
+import com.enigmashowdown.message.request.KeepAliveRequest
 import com.enigmashowdown.message.response.ConnectResponse
 import com.enigmashowdown.util.createDefaultMapper
 import com.enigmashowdown.util.getLogger
 import org.zeromq.ZContext
 import java.util.concurrent.CompletionException
+import kotlin.math.log
 
 class ClientFramework(
     private val host: String,
@@ -38,6 +41,10 @@ class ClientFramework(
                     while (!Thread.currentThread().isInterrupted) {
                         when (val message = receiver.takeMessage()) {
                             is LevelStateBroadcast -> {
+                                if (message.ticksUntilBegin > 0 && message.ticksUntilBegin % EnigmaShowdownConstants.TICKS_PER_SECOND == 0) {
+                                    // automatically send a keep alive request during the first few seconds before a game starts
+                                    client.send(KeepAliveRequest(playerId))
+                                }
                                 stateListener.onBroadcast(playerId, message, client)
                             }
                         }
