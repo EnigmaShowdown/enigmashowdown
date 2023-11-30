@@ -165,7 +165,7 @@ class EntitySpriteManager(
                     EntitySprite(
                         { drawable -> image.drawable = drawable },
                         BasicAnimation(
-                            AnimationFrames(frames) {0.2f},
+                            AnimationFrames(frames) { 0.2f },
                         ),
                     ).also { sprite ->
                         sprite.group.addActor(image)

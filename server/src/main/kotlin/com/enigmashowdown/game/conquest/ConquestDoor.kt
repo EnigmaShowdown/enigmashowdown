@@ -13,7 +13,7 @@ import com.enigmashowdown.util.Vec2
 import com.enigmashowdown.util.toVec2
 import java.util.UUID
 
-class ConquestDoor (
+class ConquestDoor(
     override val id: UUID,
     world: World,
 ) : ConquestEntity {
