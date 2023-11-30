@@ -79,7 +79,7 @@ class ConquestLevel(
                         is ConquestCrate -> entity.teleport(55f, 45.75f)
                         is ConquestFlag -> entity.teleport(67f, 48f)
                         is ConquestPressurePlate -> entity.teleport(60f, 45.75f)
-                        is ConquestDoor -> entity.teleport(60f, 45.75f)
+                        // is ConquestDoor -> entity.teleport(60f, 45.75f)
                     }
                 }
             }
