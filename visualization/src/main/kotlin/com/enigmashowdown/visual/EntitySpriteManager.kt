@@ -161,12 +161,11 @@ class EntitySpriteManager(
                         setSize(1.0f, 1.0f)
                         setPosition(-0.5f, -0.5f)
                     }
+                    val frames = renderObject.mainSkin.atlas.findRegions("door_front").map { TextureRegionDrawable(it) }
                     EntitySprite(
                         { drawable -> image.drawable = drawable },
                         BasicAnimation(
-                            AnimationFrames(
-                                listOf(renderObject.mainSkin.getDrawable("door_front")),
-                            ) { 1.0f } // TODO: Need to tune the frame timing to get the animation speed correct, may need to remove transition frames
+                            AnimationFrames(frames) {0.2f},
                         ),
                     ).also { sprite ->
                         sprite.group.addActor(image)

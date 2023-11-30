@@ -1,5 +1,6 @@
 package com.enigmashowdown.game.conquest
 
+import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
@@ -23,11 +24,11 @@ class ConquestDoor (
     ).also { body ->
         body.createFixture(
             FixtureDef().apply {
-                isSensor = false
                 filter.categoryBits = CollisionCategory.DOOR.mask
+                filter.maskBits = CollisionCategory.PLAYER.mask
 
                 shape = PolygonShape().apply {
-                    setAsBox(0.5f, 0.5f)
+                    setAsBox(0.5f, 0.5f, Vector2.Zero, 0.0f)
                 }
             },
         ).apply {
