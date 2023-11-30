@@ -75,11 +75,11 @@ class ConquestLevel(
             ConquestLevelInfo.BETA_1 -> {
                 for (entity in entities) {
                     when (entity) {
-                        is ConquestPlayer -> entity.teleport(50f, 45f)
+                        is ConquestPlayer -> entity.teleport(50f, 42f)
                         is ConquestCrate -> entity.teleport(55f, 45.75f)
                         is ConquestFlag -> entity.teleport(67f, 48f)
                         is ConquestPressurePlate -> entity.teleport(60f, 45.75f)
-                        // is ConquestDoor -> entity.teleport(60f, 45.75f)
+                        is ConquestDoor -> entity.teleport(57f, 42f)
                     }
                 }
             }
