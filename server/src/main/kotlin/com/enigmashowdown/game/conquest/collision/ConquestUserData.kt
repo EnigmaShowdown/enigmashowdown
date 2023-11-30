@@ -11,3 +11,5 @@ class PlayerUserData(
 object FlagUserData : ConquestUserData
 
 object PressurePlateUserData : ConquestUserData
+
+object DoorUserData : ConquestUserData

@@ -5,6 +5,7 @@ enum class CollisionCategory {
     FLAG,
     PRESSURE_PLATE,
     CRATE,
+    DOOR,
     // NOTE there is a maximum of 16 allowed categories. This limit is imposed by Box2D
     ;
 

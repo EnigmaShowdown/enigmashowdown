@@ -67,8 +67,10 @@ class ConquestLevel(
             add(ConquestCrate(UUID.randomUUID(), world))
             add(ConquestFlag(UUID.randomUUID(), world))
             add(ConquestPressurePlate(UUID.randomUUID(), world))
+            add(ConquestDoor(UUID.randomUUID(), world))
         }
 
+        // TODO: Add Doors to the Levels
         when (conquestLevelInfo) {
             ConquestLevelInfo.BETA_1 -> {
                 for (entity in entities) {
