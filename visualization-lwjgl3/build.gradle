@@ -3,7 +3,7 @@ apply plugin: 'application'
 
 
 application {
-    mainClassName = "com.enigmashowdown.visual.Lwjgl3Launcher"
+    mainClass = "com.enigmashowdown.visual.Lwjgl3Launcher"
 }
 
 dependencies {

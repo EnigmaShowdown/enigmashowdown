@@ -12,7 +12,6 @@ import com.enigmashowdown.util.createDefaultMapper
 import com.enigmashowdown.util.getLogger
 import org.zeromq.ZContext
 import java.util.concurrent.CompletionException
-import kotlin.math.log
 
 class ClientFramework(
     private val host: String,
@@ -34,8 +33,9 @@ class ClientFramework(
                     logger.warn("Bad response: {}", response)
                     throw IllegalStateException("Got non-success response: $response")
                 }
+                logger.info("Going to connect to server on port: ${response.broadcastPort} with player ID: ${response.uuid}")
                 val playerId = response.uuid
-                ZeroMqBroadcastReceiver(objectMapper, context, "localhost", response.broadcastPort, "").use { receiver ->
+                ZeroMqBroadcastReceiver(objectMapper, context, "localhost", response.broadcastPort, response.subscribeTopic).use { receiver ->
                     receiver.start()
 
                     while (!Thread.currentThread().isInterrupted) {

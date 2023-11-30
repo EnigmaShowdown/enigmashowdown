@@ -2,11 +2,11 @@ buildscript {
     ext {
         junit5Version = '5.10.0' // https://junit.org/junit5/
         junit5PlatformVersion = '1.10.0'
-        jacksonVersion = "2.15.1" // https://github.com/FasterXML/jackson/wiki/Jackson-Releases
+        jacksonVersion = "2.16.0" // https://github.com/FasterXML/jackson/wiki/Jackson-Releases // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
 
         kotlinVersion = "1.9.10" // https://kotlinlang.org/docs/releases.html#release-details
         slf4jVersion = '2.0.9' // http://www.slf4j.org/download.html
-        log4jVersion = '2.20.0' // https://logging.apache.org/log4j/2.x/javadoc.html
+        log4jVersion = '2.22.0' // https://logging.apache.org/log4j/2.x/javadoc.html
 
         gdxVersion = '1.12.1' // https://github.com/libgdx/libgdx/releases
     }
@@ -24,7 +24,7 @@ plugins {
     // https://github.com/diffplug/spotless/tags
     // https://github.com/diffplug/spotless/tree/main/plugin-gradle
     // https://mvnrepository.com/artifact/com.diffplug.spotless/spotless-plugin-gradle
-    id 'com.diffplug.spotless' version '6.20.0'
+    id 'com.diffplug.spotless' version '6.23.1'
     id "org.jetbrains.kotlin.jvm" version "$kotlinVersion"
 }
 
@@ -59,6 +59,7 @@ spotless {
             .setEditorConfigPath("$projectDir/.editorconfig")
             .editorConfigOverride(Map.of(
                     "ktlint_standard_no-wildcard-imports", "disabled", // thanks https://github.com/diffplug/spotless/issues/476
+                    "ktlint_standard_discouraged-comment-location", "disabled", // this is dumb
             ))
     }
     groovyGradle {
