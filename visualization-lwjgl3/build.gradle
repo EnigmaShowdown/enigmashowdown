@@ -4,6 +4,8 @@ apply plugin: 'application'
 
 application {
     mainClass = "com.enigmashowdown.visual.Lwjgl3Launcher"
+    // -XstartOnFirstThread is needed for Mac OS https://github.com/EnigmaShowdown/enigmashowdown/issues/15
+    applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
 }
 
 dependencies {
