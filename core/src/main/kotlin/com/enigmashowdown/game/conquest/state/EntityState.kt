@@ -7,6 +7,7 @@ enum class EntityType {
     PLAYER,
     CRATE,
     FLAG,
+    PRESSURE_PLATE,
 }
 
 data class EntityState(
