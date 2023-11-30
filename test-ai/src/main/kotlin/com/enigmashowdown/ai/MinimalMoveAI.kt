@@ -23,7 +23,7 @@ object MinimalMoveAI : StateListener {
                 playerId,
                 state.tick,
                 ConquestAction(
-                    moveAction = MoveAction.fromDegrees(30.0, 5.0)
+                    moveAction = MoveAction.fromDegrees(30.0, 5.0),
                 ),
             ),
         )
