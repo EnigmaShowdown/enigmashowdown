@@ -9,3 +9,5 @@ class PlayerUserData(
 ) : ConquestUserData
 
 object FlagUserData : ConquestUserData
+
+object PressurePlateUserData : ConquestUserData

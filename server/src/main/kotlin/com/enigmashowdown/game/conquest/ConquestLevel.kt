@@ -66,6 +66,7 @@ class ConquestLevel(
             addAll(players)
             add(ConquestCrate(UUID.randomUUID(), world))
             add(ConquestFlag(UUID.randomUUID(), world))
+            add(ConquestPressurePlate(UUID.randomUUID(), world))
         }
 
         when (conquestLevelInfo) {
@@ -75,6 +76,45 @@ class ConquestLevel(
                         is ConquestPlayer -> entity.teleport(50f, 45f)
                         is ConquestCrate -> entity.teleport(55f, 45.75f)
                         is ConquestFlag -> entity.teleport(67f, 48f)
+                        is ConquestPressurePlate -> entity.teleport(60f, 45.75f)
+                    }
+                }
+            }
+
+            ConquestLevelInfo.LEVEL_1 -> {
+                for (entity in entities) {
+                    when (entity) {
+                        is ConquestPlayer -> entity.teleport(39f, 50f)
+                        // TODO Level 1 has no crate in the level design, but needs a crate to function, fix that
+                        is ConquestCrate -> entity.teleport(55f, 50f)
+                        is ConquestFlag -> entity.teleport(40f, 58f)
+                    }
+                }
+            }
+            ConquestLevelInfo.LEVEL_2 -> {
+                for (entity in entities) {
+                    when (entity) {
+                        is ConquestPlayer -> entity.teleport(41f, 44f)
+                        is ConquestCrate -> entity.teleport(55f, 44f)
+                        is ConquestFlag -> entity.teleport(66f, 70f)
+                    }
+                }
+            }
+            ConquestLevelInfo.LEVEL_3 -> {
+                for (entity in entities) {
+                    when (entity) {
+                        is ConquestPlayer -> entity.teleport(41f, 72f)
+                        is ConquestCrate -> entity.teleport(55f, 72f)
+                        is ConquestFlag -> entity.teleport(87f, 8f)
+                    }
+                }
+            }
+            ConquestLevelInfo.LEVEL_4 -> {
+                for (entity in entities) {
+                    when (entity) {
+                        is ConquestPlayer -> entity.teleport(39f, 50f)
+                        is ConquestCrate -> entity.teleport(55f, 50f)
+                        is ConquestFlag -> entity.teleport(61f, 60f)
                     }
                 }
             }
