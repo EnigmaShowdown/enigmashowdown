@@ -155,6 +155,23 @@ class EntitySpriteManager(
                         sprite.group.addActor(image)
                     }
                 }
+                // TODO: Add door rendering for top down doors
+                EntityType.DOOR -> {
+                    val image = Image().apply {
+                        setSize(1.0f, 1.0f)
+                        setPosition(-0.5f, -0.5f)
+                    }
+                    EntitySprite(
+                        { drawable -> image.drawable = drawable },
+                        BasicAnimation(
+                            AnimationFrames(
+                                listOf(renderObject.mainSkin.getDrawable("door_front")),
+                            ) { 1.0f } // TODO: Need to tune the frame timing to get the animation speed correct, may need to remove transition frames
+                        ),
+                    ).also { sprite ->
+                        sprite.group.addActor(image)
+                    }
+                }
 //                else -> error("Unsupported entity type! Please add this entity type to the list of entity types that this function returns null for!")
             }
         }
