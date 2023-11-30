@@ -22,9 +22,29 @@ object MinimalMoveAI : StateListener {
             PlayerActionRequest(
                 playerId,
                 state.tick,
-                ConquestAction(
-                    moveAction = MoveAction(Math.toRadians(30.0), 5.0),
-                ),
+
+                if (state.tick < 50.0)
+                {
+                    ConquestAction(
+                        moveAction = MoveAction(Math.toRadians(30.0), 5.0)
+                    )
+                } else if (state.tick < 100.0) {
+                    ConquestAction(
+                        moveAction = MoveAction(Math.toRadians(90.0), 5.0)
+                    )
+                } else if (state.tick < 130.0) {
+                    ConquestAction(
+                        moveAction = MoveAction(Math.toRadians(180.0), 5.0)
+                    )
+                } else if (state.tick < 160.0) {
+                    ConquestAction(
+                        moveAction = MoveAction(Math.toRadians(270.0), 5.0)
+                    )
+                } else {
+                    ConquestAction(
+                        moveAction = MoveAction(Math.toRadians(180.0), 5.0)
+                    )
+                }
             ),
         )
     }
