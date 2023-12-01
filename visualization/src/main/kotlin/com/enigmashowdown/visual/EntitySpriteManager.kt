@@ -65,6 +65,12 @@ private class EntitySprite(
     }
 }
 
+// TODO: Add in opening and closing animation
+private class DoorAnimation(
+    val closed: AnimationFrames,
+    val open: AnimationFrames,
+) : EntityAnimation
+
 class EntitySpriteManager(
     private val renderObject: RenderObject,
     private val stage: Stage,
@@ -155,23 +161,26 @@ class EntitySpriteManager(
                         sprite.group.addActor(image)
                     }
                 }
-                // TODO: Add door rendering for top down doors
                 EntityType.DOOR -> {
                     val image = Image().apply {
-                        setSize(1.0f, 1.0f)
+                        setSize(2.0f, 2.0f)
                         setPosition(-0.5f, -0.5f)
                     }
-                    val frames = renderObject.mainSkin.atlas.findRegions("door_front").map { TextureRegionDrawable(it) }
+
+                    val open = renderObject.mainSkin.atlas.findRegions("door_front_open").map { TextureRegionDrawable(it) }
+                    val closed = renderObject.mainSkin.atlas.findRegions("door_front_closed").map { TextureRegionDrawable(it) }
+
                     EntitySprite(
                         { drawable -> image.drawable = drawable },
-                        BasicAnimation(
-                            AnimationFrames(frames) { 0.2f },
+                        DoorAnimation(
+                            AnimationFrames(open, { 1.0f }),
+                            AnimationFrames(closed, { 1.0f }),
                         ),
                     ).also { sprite ->
                         sprite.group.addActor(image)
                     }
                 }
-//                else -> error("Unsupported entity type! Please add this entity type to the list of entity types that this function returns null for!")
+                // else -> error("Unsupported entity type! Please add this entity type to the list of entity types that this function returns null for!")
             }
         }
     }
@@ -199,6 +208,10 @@ class EntitySpriteManager(
                     angleDegrees < (180 + 45) -> animation.left
                     else -> animation.down
                 }
+            }
+            // TODO: figure out how the correct animation can be selected
+            is DoorAnimation -> {
+                animation.open
             }
             is BasicAnimation -> {
                 animation.frames
