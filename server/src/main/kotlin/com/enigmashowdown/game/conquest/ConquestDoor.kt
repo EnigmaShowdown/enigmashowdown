@@ -28,13 +28,15 @@ class ConquestDoor(
                 filter.maskBits = CollisionCategory.PLAYER.mask
 
                 shape = PolygonShape().apply {
-                    setAsBox(0.5f, 0.5f, Vector2.Zero, 0.0f)
+                    setAsBox(1.5f, 1.5f, Vector2.Zero, 0.0f)
                 }
             },
         ).apply {
             userData = DoorUserData
         }
     }
+
+    var is_open: Boolean = false
 
     override val position: Vec2
         get() = body.position.toVec2()
