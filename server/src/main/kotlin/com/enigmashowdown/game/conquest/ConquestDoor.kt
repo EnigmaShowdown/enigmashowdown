@@ -39,7 +39,7 @@ class ConquestDoor(
     }
 
     private val doorFixture: Fixture = body.fixtureList.first()
-    var is_open : Boolean = false
+    var is_open: Boolean = false
 
     override val position: Vec2
         get() = body.position.toVec2()
@@ -59,22 +59,20 @@ class ConquestDoor(
         doorFixture.filterData = filter
     }
 
-    //Disables player collision
+    // Disables player collision
     private fun enablePlayerCollision() {
         val filter = doorFixture.filterData
         filter.maskBits = CollisionCategory.PLAYER.mask
         doorFixture.filterData = filter
     }
 
-    //Opens and closes the door
+    // Opens and closes the door
     fun toggleDoor() {
         is_open = !is_open
         if (is_open) {
             disablePlayerCollision()
-        }
-        else {
+        } else {
             enablePlayerCollision()
         }
     }
-
 }
