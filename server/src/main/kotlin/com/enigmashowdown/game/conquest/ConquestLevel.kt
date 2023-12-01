@@ -84,6 +84,7 @@ class ConquestLevel(
             }
 
             // TODO Level 1 has no crate in the level design, but needs a crate to function, fix that
+            // Modified level 1 to test .toggleDoor()
             ConquestLevelInfo.LEVEL_1 -> {
                 for (entity in entities) {
                     when (entity) {
