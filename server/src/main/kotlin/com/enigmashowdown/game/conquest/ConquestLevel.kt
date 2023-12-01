@@ -90,6 +90,7 @@ class ConquestLevel(
                         is ConquestPlayer -> entity.teleport(39f, 50f)
                         is ConquestCrate -> entity.teleport(55f, 50f)
                         is ConquestFlag -> entity.teleport(40f, 58f)
+                        // Remove test lines later
                         is ConquestDoor -> {
                             entity.teleport(47f, 50f)
                             // entity.toggleDoor()
