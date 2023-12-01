@@ -83,13 +83,19 @@ class ConquestLevel(
                 }
             }
 
+            // TODO Level 1 has no crate in the level design, but needs a crate to function, fix that
+            // Modified level 1 to test .toggleDoor()
             ConquestLevelInfo.LEVEL_1 -> {
                 for (entity in entities) {
                     when (entity) {
                         is ConquestPlayer -> entity.teleport(39f, 50f)
-                        // TODO Level 1 has no crate in the level design, but needs a crate to function, fix that
                         is ConquestCrate -> entity.teleport(55f, 50f)
                         is ConquestFlag -> entity.teleport(40f, 58f)
+                        // Remove test lines later
+                        is ConquestDoor -> {
+                            entity.teleport(47f, 50f)
+                            // entity.toggleDoor()
+                        }
                     }
                 }
             }

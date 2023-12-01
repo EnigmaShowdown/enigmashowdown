@@ -2,6 +2,7 @@ package com.enigmashowdown.game.conquest
 
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.physics.box2d.BodyDef
+import com.badlogic.gdx.physics.box2d.Fixture
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.badlogic.gdx.physics.box2d.World
@@ -17,6 +18,7 @@ class ConquestDoor(
     override val id: UUID,
     world: World,
 ) : ConquestEntity {
+
     private val body = world.createBody(
         BodyDef().apply {
             type = BodyDef.BodyType.StaticBody
@@ -28,13 +30,16 @@ class ConquestDoor(
                 filter.maskBits = CollisionCategory.PLAYER.mask
 
                 shape = PolygonShape().apply {
-                    setAsBox(0.5f, 0.5f, Vector2.Zero, 0.0f)
+                    setAsBox(1.5f, 1.5f, Vector2.Zero, 0.0f)
                 }
             },
         ).apply {
             userData = DoorUserData
         }
     }
+
+    private val doorFixture: Fixture = body.fixtureList.first()
+    var is_open: Boolean = false
 
     override val position: Vec2
         get() = body.position.toVec2()
@@ -45,5 +50,29 @@ class ConquestDoor(
 
     override fun toState(): EntityState {
         return EntityState(id, position, EntityType.DOOR)
+    }
+
+    // Enables player collision
+    private fun disablePlayerCollision() {
+        val filter = doorFixture.filterData
+        filter.maskBits = 0
+        doorFixture.filterData = filter
+    }
+
+    // Disables player collision
+    private fun enablePlayerCollision() {
+        val filter = doorFixture.filterData
+        filter.maskBits = CollisionCategory.PLAYER.mask
+        doorFixture.filterData = filter
+    }
+
+    // Opens and closes the door
+    fun toggleDoor() {
+        is_open = !is_open
+        if (is_open) {
+            disablePlayerCollision()
+        } else {
+            enablePlayerCollision()
+        }
     }
 }
