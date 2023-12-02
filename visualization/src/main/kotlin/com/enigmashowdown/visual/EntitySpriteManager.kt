@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Disposable
 import com.enigmashowdown.EnigmaShowdownConstants
+import com.enigmashowdown.game.conquest.ConquestDoor
 import com.enigmashowdown.game.conquest.state.ConquestStateView
 import com.enigmashowdown.game.conquest.state.EntityState
 import com.enigmashowdown.game.conquest.state.EntityType
@@ -211,7 +212,14 @@ class EntitySpriteManager(
             }
             // TODO: figure out how the correct animation can be selected
             is DoorAnimation -> {
-                animation.open
+                val doorEntity = entity as? ConquestDoor ?: nextEntity as? ConquestDoor
+                val doorOpen = doorEntity?.is_open ?: true
+
+                if (doorOpen) {
+                    animation.open
+                } else {
+                    animation.closed
+                }
             }
             is BasicAnimation -> {
                 animation.frames
