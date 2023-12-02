@@ -75,4 +75,14 @@ class ConquestDoor(
             enablePlayerCollision()
         }
     }
+
+    fun openDoor() {
+        is_open = true
+        disablePlayerCollision()
+    }
+
+    fun closeDoor() {
+        is_open = false
+        enablePlayerCollision()
+    }
 }

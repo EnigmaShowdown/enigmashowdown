@@ -31,10 +31,11 @@ class ConquestPressurePlate(
                 }
             },
         ).apply {
-            userData = PressurePlateUserData
+            userData = PressurePlateUserData(this@ConquestPressurePlate)
         }
     }
 
+    var pressed = 0
     override val position: Vec2
         get() = body.position.toVec2()
 

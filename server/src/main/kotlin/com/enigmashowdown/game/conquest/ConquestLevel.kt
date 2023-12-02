@@ -32,6 +32,7 @@ class ConquestLevel(
 
     val world = World(Vector2.Zero, false)
     val players: List<ConquestPlayer>
+    val plate = isAnyPlatePressed()
     val entities: MutableList<ConquestEntity>
     val levelEndStatistics = mutableListOf<LevelEndStatistic>()
 
@@ -91,14 +92,16 @@ class ConquestLevel(
                         is ConquestPlayer -> entity.teleport(39f, 50f)
                         is ConquestCrate -> entity.teleport(55f, 50f)
                         is ConquestFlag -> entity.teleport(40f, 58f)
+                        is ConquestPressurePlate -> entity.teleport(60.5f, 50f)
                         // Remove test lines later
                         is ConquestDoor -> {
-                            entity.teleport(47f, 50f)
+                            entity.teleport(58.5f, 55f)
                             // entity.toggleDoor()
                         }
                     }
                 }
             }
+
             ConquestLevelInfo.LEVEL_2 -> {
                 for (entity in entities) {
                     when (entity) {
@@ -108,6 +111,7 @@ class ConquestLevel(
                     }
                 }
             }
+
             ConquestLevelInfo.LEVEL_3 -> {
                 for (entity in entities) {
                     when (entity) {
@@ -117,6 +121,7 @@ class ConquestLevel(
                     }
                 }
             }
+
             ConquestLevelInfo.LEVEL_4 -> {
                 for (entity in entities) {
                     when (entity) {
@@ -174,10 +179,33 @@ class ConquestLevel(
                 }
             }
         }
+        for (entity in entities) {
+            when (entity) {
+                is ConquestDoor -> {
+                    if (plate) {
+                        entity.openDoor()
+                    } else {
+                        entity.closeDoor()
+                    }
+                }
+            }
+        }
 
         tick++
     }
 
+    private fun isAnyPlatePressed(): Boolean {
+        for (entity in entities) {
+            when (entity) {
+                is ConquestPressurePlate -> {
+                    if (entity.pressed > 0) {
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
     companion object {
         val logger = getLogger()
     }
