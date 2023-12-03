@@ -1,6 +1,7 @@
 package com.enigmashowdown.game.conquest.state
 
 import com.enigmashowdown.util.Vec2
+import java.security.KeyStore.TrustedCertificateEntry
 import java.util.UUID
 
 enum class EntityType {
@@ -16,4 +17,5 @@ data class EntityState(
     val id: UUID,
     val position: Vec2,
     val entityType: EntityType,
+    val visible: Boolean = true
 )

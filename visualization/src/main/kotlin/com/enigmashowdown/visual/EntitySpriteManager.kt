@@ -212,10 +212,7 @@ class EntitySpriteManager(
             }
             // TODO: figure out how the correct animation can be selected
             is DoorAnimation -> {
-                val doorEntity = entity as? ConquestDoor ?: nextEntity as? ConquestDoor
-                val doorOpen = doorEntity?.is_open ?: true
-
-                if (doorOpen) {
+                if (entity != null && entityType == EntityType.DOOR && entity.visible) {
                     animation.open
                 } else {
                     animation.closed

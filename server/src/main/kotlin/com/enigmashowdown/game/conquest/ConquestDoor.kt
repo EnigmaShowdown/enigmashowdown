@@ -49,7 +49,7 @@ class ConquestDoor(
     }
 
     override fun toState(): EntityState {
-        return EntityState(id, position, EntityType.DOOR)
+        return EntityState(id, position, EntityType.DOOR, !is_open)
     }
 
     // Enables player collision
