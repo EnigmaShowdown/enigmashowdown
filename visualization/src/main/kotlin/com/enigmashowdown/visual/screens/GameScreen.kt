@@ -38,11 +38,7 @@ import java.util.concurrent.TimeoutException
 import kotlin.math.max
 import kotlin.math.min
 
-fun hostServer(
-    screenChanger: ScreenChanger,
-    renderObject: RenderObject,
-    levelSelectionID: UUID = ConquestLevelInfo.LEVEL_1.levelId,
-): GameScreen {
+fun hostServer(screenChanger: ScreenChanger, renderObject: RenderObject, levelSelectionID: UUID = ConquestLevelInfo.LEVEL_1.levelId): GameScreen {
     val mapper = createDefaultMapper()
     val context = ZContext()
     // TODO allow user to change port this is hosted on
