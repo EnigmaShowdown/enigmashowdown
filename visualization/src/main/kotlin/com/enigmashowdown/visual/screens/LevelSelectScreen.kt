@@ -123,6 +123,14 @@ class LevelSelectScreen(
             val newScreen = hostServer(screenChanger, renderObject, ConquestLevelInfo.LEVEL_4.levelId)
             screenChanger.change(newScreen)
         }
+        if (level5Button.isPressed) {
+            val newScreen = hostServer(screenChanger, renderObject, ConquestLevelInfo.LEVEL_5.levelId)
+            screenChanger.change(newScreen)
+        }
+        if (level6Button.isPressed) {
+            val newScreen = hostServer(screenChanger, renderObject, ConquestLevelInfo.LEVEL_6.levelId)
+            screenChanger.change(newScreen)
+        }
         // TODO: Add actions for all buttons when levels exist
 
         renderable.render(delta)

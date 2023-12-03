@@ -12,6 +12,14 @@ class ConquestContactListener : ContactListener {
         getPlayerCollidingWithFlag(contact)?.let { player ->
             player.numberOfFlagsBeingTouched++
         }
+        getPlayerCollidingWithFire(contact)?.let { player ->
+            player.onFire = true
+            println("Set on fire")
+        }
+        getPlayerCollidingWithWater(contact)?.let { player ->
+            player.onFire = false
+            println("Put out fire")
+        }
     }
 
     override fun endContact(contact: Contact) {
@@ -27,6 +35,29 @@ class ConquestContactListener : ContactListener {
             return dataA.player
         }
         if (dataB is PlayerUserData && dataA is FlagUserData) {
+            return dataB.player
+        }
+        return null
+    }
+
+    private fun getPlayerCollidingWithFire(contact: Contact): ConquestPlayer? {
+        val dataA = contact.fixtureA.userData
+        val dataB = contact.fixtureB.userData
+        if (dataA is PlayerUserData && dataB is FireUserData) {
+            return dataA.player
+        }
+        if (dataB is PlayerUserData && dataA is FireUserData) {
+            return dataB.player
+        }
+        return null
+    }
+    private fun getPlayerCollidingWithWater(contact: Contact): ConquestPlayer? {
+        val dataA = contact.fixtureA.userData
+        val dataB = contact.fixtureB.userData
+        if (dataA is PlayerUserData && dataB is WaterUserData) {
+            return dataA.player
+        }
+        if (dataB is PlayerUserData && dataA is WaterUserData) {
             return dataB.player
         }
         return null
