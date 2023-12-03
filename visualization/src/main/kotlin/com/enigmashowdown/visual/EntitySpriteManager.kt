@@ -210,7 +210,6 @@ class EntitySpriteManager(
                     else -> animation.down
                 }
             }
-            // TODO: figure out how the correct animation can be selected
             is DoorAnimation -> {
                 if (entity != null && entityType == EntityType.DOOR && entity.visible) {
                     animation.open
