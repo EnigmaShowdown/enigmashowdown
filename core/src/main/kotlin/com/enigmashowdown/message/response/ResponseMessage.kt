@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes
     value = [
         JsonSubTypes.Type(ConnectResponse::class),
         JsonSubTypes.Type(FailedConnectResponse::class),
+        JsonSubTypes.Type(InvalidRequestResponse::class),
     ],
 )
 interface ResponseMessage : Packet

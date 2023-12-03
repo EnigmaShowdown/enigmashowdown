@@ -1,7 +1,6 @@
 package com.enigmashowdown.visual
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -34,6 +33,8 @@ private const val VIEW_HEIGHT = 20f
 class LevelVisualization(
     private val renderObject: RenderObject,
     map: LevelMap,
+    private val doReturnHome: () -> Unit,
+    private val doRestartLevel: () -> Unit,
 ) : Updatable {
     /** The size in pixels of a single tile */
     private val tileSize = map.tileSize
@@ -80,7 +81,6 @@ class LevelVisualization(
 //        logger.info("Tick: {} with percent: {}", previousState.gameStateView.tick - previousState.ticksUntilBegin, percent)
         val cameraPosition = averagePlayerPosition(previousState.gameStateView as ConquestStateView)
         cameraPosition.lerp(averagePlayerPosition(currentState.gameStateView as ConquestStateView), percent)
-        // TODO cameraPosition is not stable, we need to normalize its movement
 
         tiledViewport.camera.position.set(cameraPosition.x * tileSize, cameraPosition.y * tileSize, 0f)
         stageViewport.camera.position.set(cameraPosition.x, cameraPosition.y, 0f)
@@ -94,15 +94,14 @@ class LevelVisualization(
         if (endDisplay == null && gameState.levelEndStatistics.isNotEmpty()) {
             require(gameState.levelEndStatistics.size == 1) { "We currently don't have logic implemented for multiple level end statistics" }
             val statistic = gameState.levelEndStatistics[0]
-            // TODO use statistic.status, which will tell us if the level was failed
-            endDisplay = LevelEndDisplay(renderObject, statistic.tickEndedOn, 0, 0, 0)
+            endDisplay = LevelEndDisplay(renderObject, statistic.status, statistic.tickEndedOn, 0, 0, 0, doReturnHome, doRestartLevel)
+        } else if (endDisplay != null && gameState.levelEndStatistics.isEmpty()) {
+            endDisplay = null
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) { // TODO we'll want to remove this at some point
-            if (endDisplay == null) {
-                endDisplay = LevelEndDisplay(renderObject, previousState.gameStateView.tick, 0, 0, 0)
-            } else {
-                endDisplay = null
-            }
+
+        endDisplay?.let { endDisplay ->
+            endDisplay.update(delta, previousState, currentState, percent)
+            Gdx.input.inputProcessor = endDisplay.inputProcessor
         }
     }
     private fun averagePlayerPosition(state: ConquestStateView): Vector2 {
