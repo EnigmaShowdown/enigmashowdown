@@ -1,7 +1,6 @@
 package com.enigmashowdown.game.conquest.state
 
 import com.enigmashowdown.util.Vec2
-import java.security.KeyStore.TrustedCertificateEntry
 import java.util.UUID
 
 enum class EntityType {
