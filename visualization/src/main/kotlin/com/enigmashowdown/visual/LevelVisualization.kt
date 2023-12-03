@@ -1,6 +1,7 @@
 package com.enigmashowdown.visual
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -21,6 +22,8 @@ import com.enigmashowdown.visual.render.StageRenderable
 import com.enigmashowdown.visual.render.TiledMapRenderable
 import com.enigmashowdown.visual.render.ViewportResizerRenderable
 import com.enigmashowdown.visual.update.Updatable
+import kotlin.math.max
+import kotlin.math.min
 
 private const val VIEW_WIDTH = 30f
 private const val VIEW_HEIGHT = 20f
@@ -48,6 +51,9 @@ class LevelVisualization(
     private val stageViewport: Viewport
     private val tiledViewport: Viewport
     private val stage: Stage
+
+    /** Represents how far to zoom. 10 is 100% zoom (normal). 20 is 200% zoom, etc*/
+    private var zoomValue: Int = 10
 
     init {
         val tiledMap = map.tiledMap
@@ -78,6 +84,20 @@ class LevelVisualization(
     }
 
     override fun update(delta: Float, previousState: LevelStateBroadcast, currentState: LevelStateBroadcast, percent: Float) {
+        if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.EQUALS)) { // plus
+                zoomValue++
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.MINUS)) {
+                zoomValue--
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) {
+                zoomValue = 10
+            }
+            zoomValue = max(2, min(20, zoomValue))
+            scale(zoomValue / 10.0f)
+        }
+
 //        logger.info("Tick: {} with percent: {}", previousState.gameStateView.tick - previousState.ticksUntilBegin, percent)
         val cameraPosition = averagePlayerPosition(previousState.gameStateView as ConquestStateView)
         cameraPosition.lerp(averagePlayerPosition(currentState.gameStateView as ConquestStateView), percent)
@@ -119,6 +139,11 @@ class LevelVisualization(
             return Vector2()
         }
         return playerLocationSum.set(playerLocationSum.x / playerCount, playerLocationSum.y / playerCount)
+    }
+
+    private fun scale(zoom: Float) {
+        stageViewport.setWorldSize(VIEW_WIDTH / zoom, VIEW_HEIGHT / zoom)
+        tiledViewport.setWorldSize(VIEW_WIDTH * tileSize / zoom, VIEW_HEIGHT * tileSize / zoom)
     }
 
     private companion object {
