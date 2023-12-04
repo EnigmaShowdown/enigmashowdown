@@ -91,6 +91,17 @@ class ConquestLevel(
                 entities.add(newWaterBlock)
             }
         }
+        for ((mapCoordinate, blockType) in levelMap.fireWaterMap) {
+            if (blockType == 1) {
+                val newFireBlock = ConquestFire(UUID.randomUUID(), world)
+                newFireBlock.teleport(mapCoordinate.x.toFloat() + 0.5f, mapCoordinate.y.toFloat() + 0.5f)
+                entities.add(newFireBlock)
+            } else if (blockType == 2) {
+                val newWaterBlock = ConquestWater(UUID.randomUUID(), world)
+                newWaterBlock.teleport(mapCoordinate.x.toFloat() + 0.5f, mapCoordinate.y.toFloat() + 0.5f)
+                entities.add(newWaterBlock)
+            }
+        }
 
         // TODO: Add Doors to each of the levels in the correct locations
         when (conquestLevelInfo) {
