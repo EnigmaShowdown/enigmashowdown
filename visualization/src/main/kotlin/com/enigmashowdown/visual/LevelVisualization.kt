@@ -97,9 +97,6 @@ class LevelVisualization(
             zoomValue = max(2, min(20, zoomValue))
             scale(zoomValue / 10.0f)
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            doReturnHome()
-        }
 
 //        logger.info("Tick: {} with percent: {}", previousState.gameStateView.tick - previousState.ticksUntilBegin, percent)
         val cameraPosition = averagePlayerPosition(previousState.gameStateView as ConquestStateView)
