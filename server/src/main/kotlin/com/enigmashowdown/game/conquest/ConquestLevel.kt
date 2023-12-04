@@ -69,6 +69,17 @@ class ConquestLevel(
             add(ConquestPressurePlate(UUID.randomUUID(), world))
             add(ConquestDoor(UUID.randomUUID(), world))
         }
+        for ((mapCoordinate, blockType) in levelMap.fireWaterMap) {
+            if (blockType == 1) {
+                val newFireBlock = ConquestFire(UUID.randomUUID(), world)
+                newFireBlock.teleport(mapCoordinate.x.toFloat() + 0.5f, mapCoordinate.y.toFloat() + 0.5f)
+                entities.add(newFireBlock)
+            } else if (blockType == 2) {
+                val newWaterBlock = ConquestWater(UUID.randomUUID(), world)
+                newWaterBlock.teleport(mapCoordinate.x.toFloat() + 0.5f, mapCoordinate.y.toFloat() + 0.5f)
+                entities.add(newWaterBlock)
+            }
+        }
 
         // TODO: Add Doors to each of the levels in the correct locations
         when (conquestLevelInfo) {
@@ -102,8 +113,7 @@ class ConquestLevel(
             ConquestLevelInfo.LEVEL_2 -> {
                 for (entity in entities) {
                     when (entity) {
-                        is ConquestPlayer -> entity.teleport(41f, 44f)
-                        is ConquestCrate -> entity.teleport(55f, 44f)
+                        is ConquestPlayer -> entity.teleport(43f, 44f)
                         is ConquestFlag -> entity.teleport(66f, 70f)
                     }
                 }
@@ -111,8 +121,7 @@ class ConquestLevel(
             ConquestLevelInfo.LEVEL_3 -> {
                 for (entity in entities) {
                     when (entity) {
-                        is ConquestPlayer -> entity.teleport(41f, 72f)
-                        is ConquestCrate -> entity.teleport(55f, 72f)
+                        is ConquestPlayer -> entity.teleport(43f, 72f)
                         is ConquestFlag -> entity.teleport(87f, 8f)
                     }
                 }
@@ -120,9 +129,26 @@ class ConquestLevel(
             ConquestLevelInfo.LEVEL_4 -> {
                 for (entity in entities) {
                     when (entity) {
-                        is ConquestPlayer -> entity.teleport(39f, 50f)
+                        is ConquestPlayer -> entity.teleport(41f, 50f)
                         is ConquestCrate -> entity.teleport(55f, 50f)
                         is ConquestFlag -> entity.teleport(61f, 60f)
+                        is ConquestPressurePlate -> entity.teleport(64f, 58f)
+                    }
+                }
+            }
+            ConquestLevelInfo.LEVEL_5 -> {
+                for (entity in entities) {
+                    when (entity) {
+                        is ConquestPlayer -> entity.teleport(41f, 55f)
+                        is ConquestFlag -> entity.teleport(75f, 55f)
+                    }
+                }
+            }
+            ConquestLevelInfo.LEVEL_6 -> {
+                for (entity in entities) {
+                    when (entity) {
+                        is ConquestPlayer -> entity.teleport(41f, 55f)
+                        is ConquestFlag -> entity.teleport(78f, 55f)
                     }
                 }
             }
@@ -138,19 +164,23 @@ class ConquestLevel(
         }
 
     fun move(gameMove: GameMove<ConquestAction>) {
-//        logger.info("On level tick: {} moves are: {}", tick, gameMove)
+//        logger.info("On level tick: {} moves are: {}", tick, gameMove
 
         for (player in players) {
-            val action: ConquestAction? = gameMove.actions[player.id]
-            if (action != null) {
-                action.moveAction?.let { moveAction ->
-                    val speed = max(0.0, min(player.currentMaxSpeed, moveAction.speed))
-                    val x = cos(moveAction.directionRadians)
-                    val y = sin(moveAction.directionRadians)
+            if (player.playerHealth.isAlive) {
+                val action: ConquestAction? = gameMove.actions[player.id]
+                if (action != null) {
+                    action.moveAction?.let { moveAction ->
+                        val speed = max(0.0, min(player.currentMaxSpeed, moveAction.speed))
+                        val x = cos(moveAction.directionRadians)
+                        val y = sin(moveAction.directionRadians)
 
-                    player.playerBody.linearVelocity = tempVector.set((x * speed).toFloat(), (y * speed).toFloat())
+                        player.playerBody.linearVelocity = tempVector.set((x * speed).toFloat(), (y * speed).toFloat())
 //                    logger.info("x: $x, y: $y, current player position: ${player.playerBody.position}")
+                    }
                 }
+            } else {
+                player.playerBody.linearVelocity = Vector2.Zero
             }
         }
         // in a 60fps game, you typically do velocityIterations=6 and positionIterations=2
@@ -158,15 +188,32 @@ class ConquestLevel(
         world.step(EnigmaShowdownConstants.TICK_PERIOD_SECONDS, 36, 12)
 
         for (player in players) {
-            if (player.numberOfFlagsBeingTouched > 0) {
+            if (player.playerHealth.isAlive) {
+                if (player.onFire) {
+                    player.playerHealth.damage(1)
+                }
+                if (player.numberOfFlagsBeingTouched > 0) {
+                    if (levelEndStatistics.none { levelEndStatistic -> levelEndStatistic.playerId == player.id }) {
+                        levelEndStatistics.add(
+                            LevelEndStatistic(
+                                player.id,
+                                LevelEndStatus.COMPLETE,
+                                tick,
+                                player.playerHealth.damageTaken,
+                                0,
+                                0,
+                            ),
+                        )
+                    }
+                }
+            } else {
                 if (levelEndStatistics.none { levelEndStatistic -> levelEndStatistic.playerId == player.id }) {
                     levelEndStatistics.add(
                         LevelEndStatistic(
                             player.id,
-                            LevelEndStatus.COMPLETE,
+                            LevelEndStatus.FAILED,
                             tick,
-                            // TODO populate these statistic field with non-zero values
-                            0,
+                            player.playerHealth.damageTaken,
                             0,
                             0,
                         ),

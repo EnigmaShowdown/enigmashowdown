@@ -9,6 +9,8 @@ enum class EntityType {
     FLAG,
     PRESSURE_PLATE,
     DOOR,
+    FIRE,
+    WATER,
 }
 
 data class EntityState(
@@ -17,4 +19,5 @@ data class EntityState(
     val position: Vec2,
     val entityType: EntityType,
     val visible: Boolean = true,
+    val health: HealthState? = null,
 )
