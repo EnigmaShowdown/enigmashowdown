@@ -11,5 +11,5 @@ dependencies {
     api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     api "com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonVersion"
 
-    api 'org.zeromq:jeromq:0.5.3' // https://github.com/zeromq/jeromq/tags
+    api 'org.zeromq:jeromq:0.5.4' // https://github.com/zeromq/jeromq/tags
 }

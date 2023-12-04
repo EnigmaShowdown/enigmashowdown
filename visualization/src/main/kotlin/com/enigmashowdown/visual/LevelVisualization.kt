@@ -22,6 +22,8 @@ import com.enigmashowdown.visual.render.StageRenderable
 import com.enigmashowdown.visual.render.TiledMapRenderable
 import com.enigmashowdown.visual.render.ViewportResizerRenderable
 import com.enigmashowdown.visual.update.Updatable
+import kotlin.math.max
+import kotlin.math.min
 
 private const val VIEW_WIDTH = 30f
 private const val VIEW_HEIGHT = 20f
@@ -34,19 +36,24 @@ private const val VIEW_HEIGHT = 20f
 class LevelVisualization(
     private val renderObject: RenderObject,
     map: LevelMap,
+    private val doReturnHome: () -> Unit,
+    private val doRestartLevel: () -> Unit,
 ) : Updatable {
     /** The size in pixels of a single tile */
     private val tileSize = map.tileSize
-
     private val levelCountdown = LevelCountdown(renderObject)
     private var endDisplay: LevelEndDisplay? = null
     private val entitySpriteManager: EntitySpriteManager
+    private val healthBar = HealthClassManager(renderObject)
 
     val renderable: Renderable
 
     private val stageViewport: Viewport
     private val tiledViewport: Viewport
     private val stage: Stage
+
+    /** Represents how far to zoom. 10 is 100% zoom (normal). 20 is 200% zoom, etc*/
+    private var zoomValue: Int = 10
 
     init {
         val tiledMap = map.tiledMap
@@ -70,6 +77,7 @@ class LevelVisualization(
 
                 DisposeRenderable { map.tiledMap.dispose() },
                 DisposeRenderable(entitySpriteManager::dispose),
+                healthBar.renderable,
             ),
         )
 
@@ -77,10 +85,23 @@ class LevelVisualization(
     }
 
     override fun update(delta: Float, previousState: LevelStateBroadcast, currentState: LevelStateBroadcast, percent: Float) {
+        if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.EQUALS)) { // plus
+                zoomValue++
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.MINUS)) {
+                zoomValue--
+            }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_0)) {
+                zoomValue = 10
+            }
+            zoomValue = max(2, min(20, zoomValue))
+            scale(zoomValue / 10.0f)
+        }
+
 //        logger.info("Tick: {} with percent: {}", previousState.gameStateView.tick - previousState.ticksUntilBegin, percent)
         val cameraPosition = averagePlayerPosition(previousState.gameStateView as ConquestStateView)
         cameraPosition.lerp(averagePlayerPosition(currentState.gameStateView as ConquestStateView), percent)
-        // TODO cameraPosition is not stable, we need to normalize its movement
 
         tiledViewport.camera.position.set(cameraPosition.x * tileSize, cameraPosition.y * tileSize, 0f)
         stageViewport.camera.position.set(cameraPosition.x, cameraPosition.y, 0f)
@@ -91,18 +112,24 @@ class LevelVisualization(
         entitySpriteManager.update(delta, previousState, currentState, percent)
 
         val gameState = (previousState.gameStateView as ConquestStateView)
+
+        for (entity in gameState.entities) {
+            if (entity.entityType == EntityType.PLAYER) {
+                healthBar.update(entity.health!!.health, entity.health!!.totalHealth)
+            }
+        }
+
         if (endDisplay == null && gameState.levelEndStatistics.isNotEmpty()) {
             require(gameState.levelEndStatistics.size == 1) { "We currently don't have logic implemented for multiple level end statistics" }
             val statistic = gameState.levelEndStatistics[0]
-            // TODO use statistic.status, which will tell us if the level was failed
-            endDisplay = LevelEndDisplay(renderObject, statistic.tickEndedOn, 0, 0, 0)
+            endDisplay = LevelEndDisplay(renderObject, statistic.status, statistic.tickEndedOn, 0, 0, 0, doReturnHome, doRestartLevel)
+        } else if (endDisplay != null && gameState.levelEndStatistics.isEmpty()) {
+            endDisplay = null
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) { // TODO we'll want to remove this at some point
-            if (endDisplay == null) {
-                endDisplay = LevelEndDisplay(renderObject, previousState.gameStateView.tick, 0, 0, 0)
-            } else {
-                endDisplay = null
-            }
+
+        endDisplay?.let { endDisplay ->
+            endDisplay.update(delta, previousState, currentState, percent)
+            Gdx.input.inputProcessor = endDisplay.inputProcessor
         }
     }
     private fun averagePlayerPosition(state: ConquestStateView): Vector2 {
@@ -120,6 +147,11 @@ class LevelVisualization(
             return Vector2()
         }
         return playerLocationSum.set(playerLocationSum.x / playerCount, playerLocationSum.y / playerCount)
+    }
+
+    private fun scale(zoom: Float) {
+        stageViewport.setWorldSize(VIEW_WIDTH / zoom, VIEW_HEIGHT / zoom)
+        tiledViewport.setWorldSize(VIEW_WIDTH * tileSize / zoom, VIEW_HEIGHT * tileSize / zoom)
     }
 
     private companion object {

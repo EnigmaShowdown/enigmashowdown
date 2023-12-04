@@ -1,8 +1,31 @@
 apply plugin: "kotlin"
+apply plugin: 'application'
+
+
+application {
+    mainClass = "com.enigmashowdown.visual.Lwjgl3Launcher"
+    if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+        // -XstartOnFirstThread is needed for Mac OS https://github.com/EnigmaShowdown/enigmashowdown/issues/15
+        applicationDefaultJvmArgs = ["-XstartOnFirstThread"]
+    }
+}
 
 dependencies {
     api project(":visualization")
 
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+}
+
+tasks.register('dist', Jar) {
+    with jar
+    dependsOn classes
+    from {
+        duplicatesStrategy DuplicatesStrategy.EXCLUDE
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    manifest {
+        attributes 'Main-Class': "com.enigmashowdown.visual.Lwjgl3Launcher"
+    }
 }

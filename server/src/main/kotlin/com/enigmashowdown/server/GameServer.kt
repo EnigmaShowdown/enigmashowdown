@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit
 private class Client(
     val uuid: UUID,
     val clientType: ClientType,
-    var lastPing: Instant, // TODO use and update lastPing to do something useful
+    var lastPing: Instant,
 )
 private class RequestedAction<Action : PlayerAction>(
     val playerId: UUID,
@@ -37,7 +37,7 @@ private class RequestedAction<Action : PlayerAction>(
     val playerAction: Action,
 )
 
-class GameServer<StateView : GameStateView, Action : PlayerAction> (
+class GameServer<StateView : GameStateView, Action : PlayerAction>(
     private val gameManager: GameManager<StateView, Action>,
     private val broadcastManager: BroadcastManager,
     private val broadcastPort: Int,

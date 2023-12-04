@@ -38,11 +38,7 @@ import java.util.concurrent.TimeoutException
 import kotlin.math.max
 import kotlin.math.min
 
-fun hostServer(
-    screenChanger: ScreenChanger,
-    renderObject: RenderObject,
-    levelSelectionID: UUID = ConquestLevelInfo.LEVEL_1.levelId,
-): GameScreen {
+fun hostServer(screenChanger: ScreenChanger, renderObject: RenderObject, levelSelectionID: UUID = ConquestLevelInfo.LEVEL_1.levelId): GameScreen {
     val mapper = createDefaultMapper()
     val context = ZContext()
     // TODO allow user to change port this is hosted on
@@ -75,7 +71,7 @@ fun hostServer(
         requestClient.close()
     }
 
-    return GameScreen(renderObject, onDispose, requestClient, broadcastReceiver)
+    return GameScreen(renderObject, onDispose, requestClient, broadcastReceiver, screenChanger)
 }
 
 fun connectToServer(screenChanger: ScreenChanger, renderObject: RenderObject, host: String, port: Int): GameScreen? {
@@ -111,7 +107,7 @@ fun connectToServer(screenChanger: ScreenChanger, renderObject: RenderObject, ho
         requestClient.close()
     }
 
-    return GameScreen(renderObject, onDispose, requestClient, broadcastReceiver)
+    return GameScreen(renderObject, onDispose, requestClient, broadcastReceiver, screenChanger)
 }
 
 class GameScreen(
@@ -119,6 +115,7 @@ class GameScreen(
     private val onDispose: () -> Unit,
     private val requestClient: RequestClient,
     private val broadcastReceiver: BroadcastReceiver,
+    private val screenChanger: ScreenChanger,
 ) : ScreenAdapter() {
 
     private val renderable: Renderable
@@ -161,7 +158,12 @@ class GameScreen(
                     currentStateReceiveNanos = nowNanos
                     if (levelVisualization == null) {
                         val levelInfo = ConquestLevelInfo.fromLevelId(message.levelId) ?: throw IllegalStateException("Invalid level ID provided! message: $message")
-                        levelVisualization = LevelVisualization(renderObject, levelInfo.createLevelMap())
+                        levelVisualization = LevelVisualization(
+                            renderObject,
+                            levelInfo.createLevelMap(),
+                            { screenChanger.change(TitleScreen(screenChanger, renderObject)) },
+                            ::resetCurrentLevel,
+                        )
                     }
 
                     // We make a cast here because GameScreen only supports rendering conquest (as of right now)
@@ -198,6 +200,16 @@ class GameScreen(
             // TODO remove this once we properly implement level selection
             // This will complete in the background. We won't check for a successful response. We'll just assume it's fine.
             requestClient.send(LevelRequest(ConquestLevelInfo.LEVEL_4.levelId))
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) {
+            // TODO remove this once we properly implement level selection
+            // This will complete in the background. We won't check for a successful response. We'll just assume it's fine.
+            requestClient.send(LevelRequest(ConquestLevelInfo.LEVEL_5.levelId))
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) {
+            // TODO remove this once we properly implement level selection
+            // This will complete in the background. We won't check for a successful response. We'll just assume it's fine.
+            requestClient.send(LevelRequest(ConquestLevelInfo.LEVEL_6.levelId))
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
             // TODO remove this once we properly implement level selection
@@ -240,6 +252,13 @@ class GameScreen(
     }
     override fun hide() {
         dispose()
+    }
+
+    private fun resetCurrentLevel() {
+        currentState?.let {
+            val levelId = it.levelId
+            requestClient.send(LevelRequest(levelId))
+        }
     }
 
     companion object {
