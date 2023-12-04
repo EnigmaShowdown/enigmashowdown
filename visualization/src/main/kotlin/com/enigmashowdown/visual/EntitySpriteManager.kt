@@ -65,6 +65,12 @@ private class EntitySprite(
     }
 }
 
+// TODO: Add in opening and closing animation
+private class DoorAnimation(
+    val closed: AnimationFrames,
+    val open: AnimationFrames,
+) : EntityAnimation
+
 class EntitySpriteManager(
     private val renderObject: RenderObject,
     private val stage: Stage,
@@ -155,6 +161,25 @@ class EntitySpriteManager(
                         sprite.group.addActor(image)
                     }
                 }
+                EntityType.DOOR -> {
+                    val image = Image().apply {
+                        setSize(2.0f, 2.0f)
+                        setPosition(-0.5f, -0.5f)
+                    }
+
+                    val open = renderObject.mainSkin.atlas.findRegions("door_front_open").map { TextureRegionDrawable(it) }
+                    val closed = renderObject.mainSkin.atlas.findRegions("door_front_closed").map { TextureRegionDrawable(it) }
+
+                    EntitySprite(
+                        { drawable -> image.drawable = drawable },
+                        DoorAnimation(
+                            AnimationFrames(open, { 1.0f }),
+                            AnimationFrames(closed, { 1.0f }),
+                        ),
+                    ).also { sprite ->
+                        sprite.group.addActor(image)
+                    }
+                }
                 EntityType.FIRE -> {
                     val image = Image().apply {
                         setSize(1.0f, 1.0f)
@@ -214,6 +239,13 @@ class EntitySpriteManager(
                     angleDegrees < (90 + 45) -> animation.up
                     angleDegrees < (180 + 45) -> animation.left
                     else -> animation.down
+                }
+            }
+            is DoorAnimation -> {
+                if (entity != null && entityType == EntityType.DOOR && entity.visible) {
+                    animation.open
+                } else {
+                    animation.closed
                 }
             }
             is BasicAnimation -> {

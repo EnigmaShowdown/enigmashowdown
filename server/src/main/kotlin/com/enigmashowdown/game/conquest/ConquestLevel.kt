@@ -67,6 +67,29 @@ class ConquestLevel(
             add(ConquestCrate(UUID.randomUUID(), world))
             add(ConquestFlag(UUID.randomUUID(), world))
             add(ConquestPressurePlate(UUID.randomUUID(), world))
+            add(ConquestDoor(UUID.randomUUID(), world))
+        }
+        for ((mapCoordinate, blockType) in levelMap.fireWaterMap) {
+            if (blockType == 1) {
+                val newFireBlock = ConquestFire(UUID.randomUUID(), world)
+                newFireBlock.teleport(mapCoordinate.x.toFloat() + 0.5f, mapCoordinate.y.toFloat() + 0.5f)
+                entities.add(newFireBlock)
+            } else if (blockType == 2) {
+                val newWaterBlock = ConquestWater(UUID.randomUUID(), world)
+                newWaterBlock.teleport(mapCoordinate.x.toFloat() + 0.5f, mapCoordinate.y.toFloat() + 0.5f)
+                entities.add(newWaterBlock)
+            }
+        }
+        for ((mapCoordinate, blockType) in levelMap.fireWaterMap) {
+            if (blockType == 1) {
+                val newFireBlock = ConquestFire(UUID.randomUUID(), world)
+                newFireBlock.teleport(mapCoordinate.x.toFloat() + 0.5f, mapCoordinate.y.toFloat() + 0.5f)
+                entities.add(newFireBlock)
+            } else if (blockType == 2) {
+                val newWaterBlock = ConquestWater(UUID.randomUUID(), world)
+                newWaterBlock.teleport(mapCoordinate.x.toFloat() + 0.5f, mapCoordinate.y.toFloat() + 0.5f)
+                entities.add(newWaterBlock)
+            }
         }
         for ((mapCoordinate, blockType) in levelMap.fireWaterMap) {
             if (blockType == 1) {
@@ -80,6 +103,7 @@ class ConquestLevel(
             }
         }
 
+        // TODO: Add Doors to each of the levels in the correct locations
         when (conquestLevelInfo) {
             ConquestLevelInfo.BETA_1 -> {
                 for (entity in entities) {
@@ -92,11 +116,19 @@ class ConquestLevel(
                 }
             }
 
+            // TODO Level 1 has no crate in the level design, but needs a crate to function, fix that
+            // Modified level 1 to test .toggleDoor()
             ConquestLevelInfo.LEVEL_1 -> {
                 for (entity in entities) {
                     when (entity) {
-                        is ConquestPlayer -> entity.teleport(41f, 50f)
-                        is ConquestFlag -> entity.teleport(53f, 63f)
+                        is ConquestPlayer -> entity.teleport(39f, 50f)
+                        is ConquestCrate -> entity.teleport(55f, 50f)
+                        is ConquestFlag -> entity.teleport(40f, 58f)
+                        // Remove test lines later
+                        is ConquestDoor -> {
+                            entity.teleport(47f, 50f)
+                            // entity.toggleDoor()
+                        }
                     }
                 }
             }

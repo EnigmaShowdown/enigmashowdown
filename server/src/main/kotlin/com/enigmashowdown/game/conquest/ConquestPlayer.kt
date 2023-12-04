@@ -52,6 +52,6 @@ class ConquestPlayer(
     }
 
     override fun toState(): EntityState {
-        return EntityState(id, position, EntityType.PLAYER, HealthState(playerHealth.currentHealth, playerHealth.totalHealth))
+        return EntityState(id, position, EntityType.PLAYER, health = HealthState(playerHealth.currentHealth, playerHealth.totalHealth))
     }
 }

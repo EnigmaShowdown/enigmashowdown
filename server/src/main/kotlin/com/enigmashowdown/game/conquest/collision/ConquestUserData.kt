@@ -12,5 +12,6 @@ object FlagUserData : ConquestUserData
 
 object PressurePlateUserData : ConquestUserData
 
+object DoorUserData : ConquestUserData
 object FireUserData : ConquestUserData
 object WaterUserData : ConquestUserData
