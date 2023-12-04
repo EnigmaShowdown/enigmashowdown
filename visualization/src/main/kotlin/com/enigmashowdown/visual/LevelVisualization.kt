@@ -37,10 +37,10 @@ class LevelVisualization(
 ) : Updatable {
     /** The size in pixels of a single tile */
     private val tileSize = map.tileSize
-
     private val levelCountdown = LevelCountdown(renderObject)
     private var endDisplay: LevelEndDisplay? = null
     private val entitySpriteManager: EntitySpriteManager
+    private val healthBar = HealthClassManager(renderObject)
 
     val renderable: Renderable
 
@@ -70,6 +70,7 @@ class LevelVisualization(
 
                 DisposeRenderable { map.tiledMap.dispose() },
                 DisposeRenderable(entitySpriteManager::dispose),
+                healthBar.renderable,
             ),
         )
 
@@ -91,6 +92,13 @@ class LevelVisualization(
         entitySpriteManager.update(delta, previousState, currentState, percent)
 
         val gameState = (previousState.gameStateView as ConquestStateView)
+
+        for (entity in gameState.entities) {
+            if (entity.entityType == EntityType.PLAYER) {
+                healthBar.update(entity.health!!.health, entity.health!!.totalHealth)
+            }
+        }
+
         if (endDisplay == null && gameState.levelEndStatistics.isNotEmpty()) {
             require(gameState.levelEndStatistics.size == 1) { "We currently don't have logic implemented for multiple level end statistics" }
             val statistic = gameState.levelEndStatistics[0]

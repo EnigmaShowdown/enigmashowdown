@@ -1,4 +1,3 @@
 package com.enigmashowdown.game.conquest.state
 
-class HealthState {
-}
+data class HealthState(val health: Int, val totalHealth: Int)

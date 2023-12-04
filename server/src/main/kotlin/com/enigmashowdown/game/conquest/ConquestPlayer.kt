@@ -10,6 +10,7 @@ import com.enigmashowdown.game.conquest.collision.CollisionCategory
 import com.enigmashowdown.game.conquest.collision.PlayerUserData
 import com.enigmashowdown.game.conquest.state.EntityState
 import com.enigmashowdown.game.conquest.state.EntityType
+import com.enigmashowdown.game.conquest.state.HealthState
 import com.enigmashowdown.util.Vec2
 import com.enigmashowdown.util.toVec2
 import java.util.UUID
@@ -40,6 +41,8 @@ class ConquestPlayer(
 
     var numberOfFlagsBeingTouched = 0
 
+    val playerHealth = ConquestHealth(100, 100)
+
     override val position: Vec2
         get() = playerBody.position.toVec2()
 
@@ -48,6 +51,6 @@ class ConquestPlayer(
     }
 
     override fun toState(): EntityState {
-        return EntityState(id, position, EntityType.PLAYER)
+        return EntityState(id, position, EntityType.PLAYER, HealthState(playerHealth.currentHealth, playerHealth.totalHealth))
     }
 }
