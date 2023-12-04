@@ -32,7 +32,6 @@ class ConquestLevel(
 
     val world = World(Vector2.Zero, false)
     val players: List<ConquestPlayer>
-    val plate = isAnyPlatePressed()
     val entities: MutableList<ConquestEntity>
     val levelEndStatistics = mutableListOf<LevelEndStatistic>()
 
@@ -122,15 +121,12 @@ class ConquestLevel(
             ConquestLevelInfo.LEVEL_1 -> {
                 for (entity in entities) {
                     when (entity) {
-                        is ConquestPlayer -> entity.teleport(39f, 50f)
+                        is ConquestPlayer -> entity.teleport(41f, 50f)
                         is ConquestCrate -> entity.teleport(55f, 50f)
                         is ConquestFlag -> entity.teleport(40f, 58f)
                         is ConquestPressurePlate -> entity.teleport(60.5f, 50f)
                         // Remove test lines later
-                        is ConquestDoor -> {
-                            entity.teleport(58.5f, 55f)
-                            // entity.toggleDoor()
-                        }
+                        is ConquestDoor -> entity.teleport(58.5f, 55f)
                     }
                 }
             }
@@ -248,6 +244,7 @@ class ConquestLevel(
                 }
             }
         }
+        val plate = isAnyPlatePressed()
         for (entity in entities) {
             when (entity) {
                 is ConquestDoor -> {

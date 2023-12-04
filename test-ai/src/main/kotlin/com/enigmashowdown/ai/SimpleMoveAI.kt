@@ -39,16 +39,22 @@ object SimpleMoveAI : StateListener {
                 PlayerActionRequest(
                     playerId,
                     state.tick,
-                    ConquestAction(
-                        moveAction = MoveAction(angleRadians, 5.0),
-                    ),
+                    if (state.tick < 70.0) {
+                        ConquestAction(
+                            moveAction = MoveAction(Math.toRadians(0.0), 5.0),
+                        )
+                    } else {
+                        ConquestAction(
+                            moveAction = MoveAction(Math.toRadians(90.0), 5.0),
+                        )
+                    },
                 ),
             )
         }
     }
-
     private val logger = getLogger()
 }
+
 
 fun main(args: Array<String>) {
     ClientFramework("localhost", EnigmaShowdownConstants.PORT_SERVER, SimpleMoveAI).start()

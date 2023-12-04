@@ -61,7 +61,14 @@ class GameServer<StateView : GameStateView, Action : PlayerAction>(
     // endregion
 
     fun start() {
-        scheduledExecutor.scheduleAtFixedRate(::tick, 0L, EnigmaShowdownConstants.TICK_PERIOD_MILLIS, TimeUnit.MILLISECONDS)
+        scheduledExecutor.scheduleAtFixedRate(::doTickOrLogError, 0L, EnigmaShowdownConstants.TICK_PERIOD_MILLIS, TimeUnit.MILLISECONDS)
+    }
+    private fun doTickOrLogError() {
+        try {
+            tick()
+        } catch (ex: Throwable) {
+            logger.error("Got fatal error!", ex)
+        }
     }
     override fun responseTo(request: RequestMessage): ResponseMessage {
         when (request) {

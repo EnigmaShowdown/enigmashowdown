@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.World
 import com.enigmashowdown.game.conquest.collision.CollisionCategory
 import com.enigmashowdown.game.conquest.collision.DoorUserData
 import com.enigmashowdown.game.conquest.state.EntityState
+import com.enigmashowdown.game.conquest.state.EntityStatus
 import com.enigmashowdown.game.conquest.state.EntityType
 import com.enigmashowdown.util.Vec2
 import com.enigmashowdown.util.toVec2
@@ -52,7 +53,7 @@ class ConquestDoor(
     }
 
     override fun toState(): EntityState {
-        return EntityState(id, position, EntityType.DOOR, visible = !isOpen)
+        return EntityState(id, position, EntityType.DOOR, entityStatus = if (isOpen) EntityStatus.DOOR_OPEN else EntityStatus.NORMAL)
     }
 
     fun openDoor() {
