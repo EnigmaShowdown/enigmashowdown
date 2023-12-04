@@ -55,7 +55,6 @@ object SimpleMoveAI : StateListener {
     private val logger = getLogger()
 }
 
-
 fun main(args: Array<String>) {
     ClientFramework("localhost", EnigmaShowdownConstants.PORT_SERVER, SimpleMoveAI).start()
 }
