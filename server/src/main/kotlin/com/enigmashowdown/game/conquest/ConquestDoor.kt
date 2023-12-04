@@ -39,7 +39,7 @@ class ConquestDoor(
     }
 
     private val doorFixture: Fixture = body.fixtureList.first()
-    var is_open: Boolean = false
+    private var isOpen: Boolean = false
 
     override val position: Vec2
         get() = body.position.toVec2()
@@ -49,7 +49,7 @@ class ConquestDoor(
     }
 
     override fun toState(): EntityState {
-        return EntityState(id, position, EntityType.DOOR, !is_open)
+        return EntityState(id, position, EntityType.DOOR, !isOpen)
     }
 
     // Enables player collision
@@ -68,8 +68,8 @@ class ConquestDoor(
 
     // Opens and closes the door
     fun toggleDoor() {
-        is_open = !is_open
-        if (is_open) {
+        isOpen = !isOpen
+        if (isOpen) {
             disablePlayerCollision()
         } else {
             enablePlayerCollision()

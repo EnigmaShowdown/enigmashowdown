@@ -16,5 +16,5 @@ data class EntityState(
     val id: UUID,
     val position: Vec2,
     val entityType: EntityType,
-    val visible: Boolean = true
+    val visible: Boolean = true,
 )
