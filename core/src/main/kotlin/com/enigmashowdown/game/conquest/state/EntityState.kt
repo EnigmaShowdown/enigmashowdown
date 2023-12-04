@@ -8,6 +8,8 @@ enum class EntityType {
     CRATE,
     FLAG,
     PRESSURE_PLATE,
+    FIRE,
+    WATER,
 }
 
 data class EntityState(

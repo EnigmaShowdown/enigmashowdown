@@ -16,6 +16,8 @@ enum class ConquestLevelInfo(
     LEVEL_2(LevelId.LEVEL_2, "conquest/level2.tmx"),
     LEVEL_3(LevelId.LEVEL_3, "conquest/level3.tmx"),
     LEVEL_4(LevelId.LEVEL_4, "conquest/level4.tmx"),
+    LEVEL_5(LevelId.LEVEL_5, "conquest/level5.tmx"),
+    LEVEL_6(LevelId.LEVEL_6, "conquest/level6.tmx"),
     BETA_1(LevelId.BETA_1, "conquest/beta1.tmx"),
     ;
 

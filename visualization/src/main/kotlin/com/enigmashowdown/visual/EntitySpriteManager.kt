@@ -155,6 +155,38 @@ class EntitySpriteManager(
                         sprite.group.addActor(image)
                     }
                 }
+                EntityType.FIRE -> {
+                    val image = Image().apply {
+                        setSize(1.0f, 1.0f)
+                        setPosition(-0.5f, -0.5f)
+                    }
+                    EntitySprite(
+                        { drawable -> image.drawable = drawable },
+                        BasicAnimation(
+                            AnimationFrames(
+                                listOf(renderObject.mainSkin.getDrawable("fire_block")),
+                            ) { 1.0f }, // the frame length does not matter, since there is only one frame
+                        ),
+                    ).also { sprite ->
+                        sprite.group.addActor(image)
+                    }
+                }
+                EntityType.WATER -> {
+                    val image = Image().apply {
+                        setSize(1.0f, 1.0f)
+                        setPosition(-0.5f, -0.5f)
+                    }
+                    EntitySprite(
+                        { drawable -> image.drawable = drawable },
+                        BasicAnimation(
+                            AnimationFrames(
+                                listOf(renderObject.mainSkin.getDrawable("water_block")),
+                            ) { 1.0f }, // the frame length does not matter, since there is only one frame
+                        ),
+                    ).also { sprite ->
+                        sprite.group.addActor(image)
+                    }
+                }
 //                else -> error("Unsupported entity type! Please add this entity type to the list of entity types that this function returns null for!")
             }
         }

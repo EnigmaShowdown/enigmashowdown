@@ -24,6 +24,7 @@ class LevelMap(
 
     // TODO maybe instead of exposing a barrierMap, we create a more general type (that lives in :core) that represents the physical layout of the map (could have more data than just barriers)
     val barrierMap: Map<MapCoordinate, BarrierType>
+    val fireWaterMap: Map<MapCoordinate, Int>
 
     init {
         var backgroundLayerIndex: Int? = null
@@ -51,10 +52,12 @@ class LevelMap(
         topLayer = tiledMap.layers[topLayerIndex] as TiledMapTileLayer
 
         val barrierMap = mutableMapOf<MapCoordinate, BarrierType>()
+        val fireWaterMap = mutableMapOf<MapCoordinate, Int>()
         for (x in 0 until mapWidth) for (y in 0 until mapHeight) {
             val cell = foregroundLayer.getCell(x, y)
+            val floorcell = floorLayer.getCell(x, y)
             if (cell != null) {
-                val tileId = cell.tile.id // note that this is 1 based, unlike in the tiled editor, where the ID is 0 based. This means this is +1 from the expected value
+                val tileId = cell.tile.id % 256 // note that this is 1 based, unlike in the tiled editor, where the ID is 0 based. This means this is +1 from the expected value
                 barrierMap[MapCoordinate(x, y)] = when (tileId) {
                     in listOf(68) -> BarrierType.WALL_TRIANGLE_SMOOTH_LOWER_LEFT
                     in listOf(69) -> BarrierType.WALL_TRIANGLE_SMOOTH_LOWER_RIGHT
@@ -63,7 +66,16 @@ class LevelMap(
                     else -> BarrierType.WALL
                 }
             }
+            if (floorcell != null) {
+                val tileId = floorcell.tile.id % 256
+                fireWaterMap[MapCoordinate(x, y)] = when (tileId) {
+                    in listOf(49) -> 1
+                    in listOf(50) -> 2
+                    else -> 0
+                }
+            }
         }
         this.barrierMap = barrierMap
+        this.fireWaterMap = fireWaterMap
     }
 }

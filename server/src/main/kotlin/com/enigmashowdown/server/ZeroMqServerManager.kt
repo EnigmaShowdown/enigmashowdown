@@ -2,10 +2,12 @@ package com.enigmashowdown.server
 
 import com.enigmashowdown.EnigmaShowdownConstants
 import com.enigmashowdown.message.request.RequestMessage
+import com.enigmashowdown.message.response.InvalidRequestResponse
 import com.enigmashowdown.util.getLogger
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.zeromq.SocketType
 import org.zeromq.ZContext
+import java.io.IOException
 import java.util.concurrent.Executors
 
 class ZeroMqServerManager(
@@ -31,9 +33,13 @@ class ZeroMqServerManager(
                     logger.warn("Received data is null. Something must be wrong")
                     continue
                 }
-                // TODO error handling for readValue call
-                val request = objectMapper.readValue(receivedData, RequestMessage::class.java)
-                val response = serverHandler.responseTo(request)
+                val response = try {
+                    val request = objectMapper.readValue(receivedData, RequestMessage::class.java)
+                    serverHandler.responseTo(request)
+                } catch (ex: IOException) {
+                    logger.warn("Got bad data. Will return InvalidRequestResponse", ex)
+                    InvalidRequestResponse
+                }
                 val responseData = objectMapper.writeValueAsBytes(response)
                 socket.send(responseData)
             }
