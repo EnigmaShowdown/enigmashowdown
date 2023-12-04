@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.badlogic.gdx.utils.viewport.Viewport
 import com.enigmashowdown.game.conquest.map.LevelMap
 import com.enigmashowdown.game.conquest.state.ConquestStateView
 import com.enigmashowdown.game.conquest.state.EntityType
