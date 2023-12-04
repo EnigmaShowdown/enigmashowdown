@@ -27,7 +27,6 @@ class ConquestDoor(
         body.createFixture(
             FixtureDef().apply {
                 filter.categoryBits = CollisionCategory.DOOR.mask
-                filter.maskBits = CollisionCategory.PLAYER.mask
 
                 shape = PolygonShape().apply {
                     setAsBox(1.5f, 1.5f, Vector2.Zero, 0.0f)
@@ -41,6 +40,10 @@ class ConquestDoor(
     private val doorFixture: Fixture = body.fixtureList.first()
     private var isOpen: Boolean = false
 
+    init {
+        closeDoor()
+    }
+
     override val position: Vec2
         get() = body.position.toVec2()
 
@@ -52,37 +55,21 @@ class ConquestDoor(
         return EntityState(id, position, EntityType.DOOR, visible = !isOpen)
     }
 
-    // Enables player collision
-    private fun disablePlayerCollision() {
+    fun openDoor() {
+        isOpen = true
+
+        // disable collision
         val filter = doorFixture.filterData
         filter.maskBits = 0
         doorFixture.filterData = filter
     }
 
-    // Disables player collision
-    private fun enablePlayerCollision() {
-        val filter = doorFixture.filterData
-        filter.maskBits = CollisionCategory.PLAYER.mask
-        doorFixture.filterData = filter
-    }
-
-    // Opens and closes the door
-    fun toggleDoor() {
-        isOpen = !isOpen
-        if (isOpen) {
-            disablePlayerCollision()
-        } else {
-            enablePlayerCollision()
-        }
-    }
-
-    fun openDoor() {
-        isOpen = true
-        disablePlayerCollision()
-    }
-
     fun closeDoor() {
         isOpen = false
-        enablePlayerCollision()
+
+        // enable collisions
+        val filter = doorFixture.filterData
+        filter.maskBits = CollisionCategory.MASK_ALL
+        doorFixture.filterData = filter
     }
 }
