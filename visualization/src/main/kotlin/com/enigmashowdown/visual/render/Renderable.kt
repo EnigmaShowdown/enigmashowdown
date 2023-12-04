@@ -9,4 +9,20 @@ import com.badlogic.gdx.utils.Disposable
 interface Renderable : Disposable {
     fun render(delta: Float)
     fun resize(width: Int, height: Int)
+
+    companion object {
+        inline fun withRender(crossinline render: (Float) -> Unit): Renderable {
+            return object : Renderable {
+                override fun render(delta: Float) {
+                    render(delta)
+                }
+
+                override fun resize(width: Int, height: Int) {
+                }
+
+                override fun dispose() {
+                }
+            }
+        }
+    }
 }

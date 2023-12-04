@@ -71,7 +71,7 @@ fun hostServer(screenChanger: ScreenChanger, renderObject: RenderObject, levelSe
         requestClient.close()
     }
 
-    return GameScreen(renderObject, onDispose, requestClient, broadcastReceiver)
+    return GameScreen(renderObject, onDispose, requestClient, broadcastReceiver, screenChanger)
 }
 
 fun connectToServer(screenChanger: ScreenChanger, renderObject: RenderObject, host: String, port: Int): GameScreen? {
@@ -107,7 +107,7 @@ fun connectToServer(screenChanger: ScreenChanger, renderObject: RenderObject, ho
         requestClient.close()
     }
 
-    return GameScreen(renderObject, onDispose, requestClient, broadcastReceiver)
+    return GameScreen(renderObject, onDispose, requestClient, broadcastReceiver, screenChanger)
 }
 
 class GameScreen(
@@ -115,6 +115,7 @@ class GameScreen(
     private val onDispose: () -> Unit,
     private val requestClient: RequestClient,
     private val broadcastReceiver: BroadcastReceiver,
+    private val screenChanger: ScreenChanger,
 ) : ScreenAdapter() {
 
     private val renderable: Renderable
@@ -157,7 +158,12 @@ class GameScreen(
                     currentStateReceiveNanos = nowNanos
                     if (levelVisualization == null) {
                         val levelInfo = ConquestLevelInfo.fromLevelId(message.levelId) ?: throw IllegalStateException("Invalid level ID provided! message: $message")
-                        levelVisualization = LevelVisualization(renderObject, levelInfo.createLevelMap())
+                        levelVisualization = LevelVisualization(
+                            renderObject,
+                            levelInfo.createLevelMap(),
+                            { screenChanger.change(TitleScreen(screenChanger, renderObject)) },
+                            ::resetCurrentLevel,
+                        )
                     }
 
                     // We make a cast here because GameScreen only supports rendering conquest (as of right now)
@@ -236,6 +242,13 @@ class GameScreen(
     }
     override fun hide() {
         dispose()
+    }
+
+    private fun resetCurrentLevel() {
+        currentState?.let {
+            val levelId = it.levelId
+            requestClient.send(LevelRequest(levelId))
+        }
     }
 
     companion object {
