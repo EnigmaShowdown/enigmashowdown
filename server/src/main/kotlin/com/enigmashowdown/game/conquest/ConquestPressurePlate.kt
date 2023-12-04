@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.World
 import com.enigmashowdown.game.conquest.collision.CollisionCategory
 import com.enigmashowdown.game.conquest.collision.PressurePlateUserData
 import com.enigmashowdown.game.conquest.state.EntityState
+import com.enigmashowdown.game.conquest.state.EntityStatus
 import com.enigmashowdown.game.conquest.state.EntityType
 import com.enigmashowdown.util.Vec2
 import com.enigmashowdown.util.toVec2
@@ -31,10 +32,11 @@ class ConquestPressurePlate(
                 }
             },
         ).apply {
-            userData = PressurePlateUserData
+            userData = PressurePlateUserData(this@ConquestPressurePlate)
         }
     }
 
+    var pressed = 0
     override val position: Vec2
         get() = body.position.toVec2()
 
@@ -43,6 +45,6 @@ class ConquestPressurePlate(
     }
 
     override fun toState(): EntityState {
-        return EntityState(id, position, EntityType.PRESSURE_PLATE)
+        return EntityState(id, position, EntityType.PRESSURE_PLATE, entityStatus = if (pressed > 0) EntityStatus.PRESSURE_PLATE_ACTIVATED else EntityStatus.NORMAL)
     }
 }

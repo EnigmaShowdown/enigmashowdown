@@ -13,4 +13,8 @@ enum class CollisionCategory {
 
     val mask: Short
         get() = (1 shl ordinal).toShort()
+
+    companion object {
+        const val MASK_ALL: Short = -1
+    }
 }

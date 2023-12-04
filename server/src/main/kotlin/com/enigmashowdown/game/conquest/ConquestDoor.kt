@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.World
 import com.enigmashowdown.game.conquest.collision.CollisionCategory
 import com.enigmashowdown.game.conquest.collision.DoorUserData
 import com.enigmashowdown.game.conquest.state.EntityState
+import com.enigmashowdown.game.conquest.state.EntityStatus
 import com.enigmashowdown.game.conquest.state.EntityType
 import com.enigmashowdown.util.Vec2
 import com.enigmashowdown.util.toVec2
@@ -27,7 +28,6 @@ class ConquestDoor(
         body.createFixture(
             FixtureDef().apply {
                 filter.categoryBits = CollisionCategory.DOOR.mask
-                filter.maskBits = CollisionCategory.PLAYER.mask
 
                 shape = PolygonShape().apply {
                     setAsBox(1.5f, 1.5f, Vector2.Zero, 0.0f)
@@ -41,6 +41,10 @@ class ConquestDoor(
     private val doorFixture: Fixture = body.fixtureList.first()
     private var isOpen: Boolean = false
 
+    init {
+        closeDoor()
+    }
+
     override val position: Vec2
         get() = body.position.toVec2()
 
@@ -49,30 +53,24 @@ class ConquestDoor(
     }
 
     override fun toState(): EntityState {
-        return EntityState(id, position, EntityType.DOOR, visible = !isOpen)
+        return EntityState(id, position, EntityType.DOOR, entityStatus = if (isOpen) EntityStatus.DOOR_OPEN else EntityStatus.NORMAL)
     }
 
-    // Enables player collision
-    private fun disablePlayerCollision() {
+    fun openDoor() {
+        isOpen = true
+
+        // disable collision
         val filter = doorFixture.filterData
         filter.maskBits = 0
         doorFixture.filterData = filter
     }
 
-    // Disables player collision
-    private fun enablePlayerCollision() {
-        val filter = doorFixture.filterData
-        filter.maskBits = CollisionCategory.PLAYER.mask
-        doorFixture.filterData = filter
-    }
+    fun closeDoor() {
+        isOpen = false
 
-    // Opens and closes the door
-    fun toggleDoor() {
-        isOpen = !isOpen
-        if (isOpen) {
-            disablePlayerCollision()
-        } else {
-            enablePlayerCollision()
-        }
+        // enable collisions
+        val filter = doorFixture.filterData
+        filter.maskBits = CollisionCategory.MASK_ALL
+        doorFixture.filterData = filter
     }
 }

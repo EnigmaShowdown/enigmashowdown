@@ -5,6 +5,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.FixtureDef
 import com.badlogic.gdx.physics.box2d.PolygonShape
 import com.badlogic.gdx.physics.box2d.World
+import com.enigmashowdown.game.conquest.collision.CollisionCategory
+import com.enigmashowdown.game.conquest.collision.CrateUserData
 import com.enigmashowdown.game.conquest.state.EntityState
 import com.enigmashowdown.game.conquest.state.EntityType
 import com.enigmashowdown.util.Vec2
@@ -24,11 +26,15 @@ class ConquestCrate(
     ).apply {
         createFixture(
             FixtureDef().apply {
+                filter.categoryBits = CollisionCategory.CRATE.mask
+
                 shape = PolygonShape().apply {
                     setAsBox(0.5f, 0.5f, Vector2.Zero, 0.0f)
                 }
             },
-        )
+        ).apply {
+            userData = CrateUserData
+        }
     }
 
     override val position: Vec2

@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.ExtendViewport
-import com.badlogic.gdx.utils.viewport.Viewport
 import com.enigmashowdown.game.conquest.map.LevelMap
 import com.enigmashowdown.game.conquest.state.ConquestStateView
 import com.enigmashowdown.game.conquest.state.EntityType
@@ -48,8 +47,8 @@ class LevelVisualization(
 
     val renderable: Renderable
 
-    private val stageViewport: Viewport
-    private val tiledViewport: Viewport
+    private val stageViewport: ExtendViewport
+    private val tiledViewport: ExtendViewport
     private val stage: Stage
 
     /** Represents how far to zoom. 10 is 100% zoom (normal). 20 is 200% zoom, etc*/
@@ -68,7 +67,7 @@ class LevelVisualization(
 //        stage.isDebugAll = true // turn on if you are having trouble figuring out what the bounds of your actor is
         renderable = RenderableMultiplexer(
             listOf(
-                ViewportResizerRenderable(tiledViewport), // we need a resizer for tiledViewport because it is not managed by a stage like stateViewport is
+                ViewportResizerRenderable(tiledViewport), // we need a resizer for tiledViewport because it is not managed by a stage like stageViewport is
                 TiledMapRenderable(tiledMap, tiledCamera, intArrayOf(map.backgroundLayerIndex, map.floorLayerIndex, map.foregroundLayerIndex)),
                 StageRenderable(stage),
                 TiledMapRenderable(tiledMap, tiledCamera, intArrayOf(map.topLayerIndex)),
@@ -150,8 +149,14 @@ class LevelVisualization(
     }
 
     private fun scale(zoom: Float) {
-        stageViewport.setWorldSize(VIEW_WIDTH / zoom, VIEW_HEIGHT / zoom)
-        tiledViewport.setWorldSize(VIEW_WIDTH * tileSize / zoom, VIEW_HEIGHT * tileSize / zoom)
+        tiledViewport.minWorldWidth = VIEW_WIDTH * tileSize / zoom
+        tiledViewport.minWorldHeight = VIEW_HEIGHT * tileSize / zoom
+
+        stageViewport.minWorldWidth = VIEW_WIDTH / zoom
+        stageViewport.minWorldHeight = VIEW_HEIGHT / zoom
+
+        tiledViewport.update(Gdx.graphics.width, Gdx.graphics.height)
+        stageViewport.update(Gdx.graphics.width, Gdx.graphics.height)
     }
 
     private companion object {

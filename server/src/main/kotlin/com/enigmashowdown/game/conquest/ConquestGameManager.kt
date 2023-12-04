@@ -57,6 +57,7 @@ class ConquestGameManager : GameManager<ConquestStateView, ConquestAction> {
             return false
         }
         endCurrentLevel()
+        logger.info("About to init")
         currentLevel = ConquestLevel(players.toSet(), levelData.conquestLevelInfo, levelData.levelMap)
         return true
     }

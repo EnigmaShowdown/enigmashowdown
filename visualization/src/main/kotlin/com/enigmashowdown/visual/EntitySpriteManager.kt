@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Disposable
 import com.enigmashowdown.EnigmaShowdownConstants
 import com.enigmashowdown.game.conquest.state.ConquestStateView
 import com.enigmashowdown.game.conquest.state.EntityState
+import com.enigmashowdown.game.conquest.state.EntityStatus
 import com.enigmashowdown.game.conquest.state.EntityType
 import com.enigmashowdown.message.broadcast.LevelStateBroadcast
 import com.enigmashowdown.util.getLogger
@@ -38,6 +39,11 @@ private class Moving4WayAnimation(
     val down: AnimationFrames,
     val left: AnimationFrames,
     val right: AnimationFrames,
+) : EntityAnimation
+
+private class PressurePlateAnimation(
+    val deactivated: AnimationFrames,
+    val activated: AnimationFrames,
 ) : EntityAnimation
 
 private class BasicAnimation(
@@ -152,10 +158,13 @@ class EntitySpriteManager(
                     }
                     EntitySprite(
                         { drawable -> image.drawable = drawable },
-                        BasicAnimation(
+                        PressurePlateAnimation(
                             AnimationFrames(
-                                listOf(renderObject.mainSkin.getDrawable("test-plate")),
-                            ) { 1.0f }, // the frame length does not matter, since there is only one frame
+                                renderObject.mainSkin.atlas.findRegions("plate_deactivated").map { TextureRegionDrawable(it) },
+                            ) { 1.0f },
+                            AnimationFrames(
+                                renderObject.mainSkin.atlas.findRegions("plate_activated").map { TextureRegionDrawable(it) },
+                            ) { 0.5f },
                         ),
                     ).also { sprite ->
                         sprite.group.addActor(image)
@@ -173,8 +182,8 @@ class EntitySpriteManager(
                     EntitySprite(
                         { drawable -> image.drawable = drawable },
                         DoorAnimation(
-                            AnimationFrames(open, { 1.0f }),
                             AnimationFrames(closed, { 1.0f }),
+                            AnimationFrames(open, { 1.0f }),
                         ),
                     ).also { sprite ->
                         sprite.group.addActor(image)
@@ -242,10 +251,17 @@ class EntitySpriteManager(
                 }
             }
             is DoorAnimation -> {
-                if (entity != null && entityType == EntityType.DOOR && entity.visible) {
+                if (entity != null && entity.entityStatus == EntityStatus.DOOR_OPEN) {
                     animation.open
                 } else {
                     animation.closed
+                }
+            }
+            is PressurePlateAnimation -> {
+                if (entity != null && entity.entityStatus == EntityStatus.PRESSURE_PLATE_ACTIVATED) {
+                    animation.activated
+                } else {
+                    animation.deactivated
                 }
             }
             is BasicAnimation -> {
@@ -279,6 +295,13 @@ class EntitySpriteManager(
         }
         // Actors on the bottom should be in front
         stage.actors.asSequence().sortedByDescending { actor -> actor.y }.forEach { actor -> actor.toFront() }
+
+        for (sprite in map.values) {
+            // pressure plates need to be on the back always
+            if (sprite.animation is PressurePlateAnimation) {
+                sprite.group.toBack()
+            }
+        }
 
         // For any entity that is removed, let's remove that entity from our map
         map.entries.iterator().let { iterator ->

@@ -144,6 +144,10 @@ class GameScreen(
         currentStateReceiveNanos = null
     }
 
+    private fun returnHome() {
+        screenChanger.change(TitleScreen(screenChanger, renderObject))
+    }
+
     private fun processMessages(nowNanos: Long) {
         while (true) {
             val message = broadcastReceiver.popMessage() ?: break
@@ -161,7 +165,7 @@ class GameScreen(
                         levelVisualization = LevelVisualization(
                             renderObject,
                             levelInfo.createLevelMap(),
-                            { screenChanger.change(TitleScreen(screenChanger, renderObject)) },
+                            ::returnHome,
                             ::resetCurrentLevel,
                         )
                     }
@@ -180,6 +184,10 @@ class GameScreen(
     override fun render(delta: Float) {
         val nowNanos = System.nanoTime()
         processMessages(nowNanos)
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            returnHome()
+        }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
             // TODO remove this once we properly implement level selection
