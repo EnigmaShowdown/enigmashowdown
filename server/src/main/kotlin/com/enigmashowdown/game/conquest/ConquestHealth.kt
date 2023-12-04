@@ -15,8 +15,7 @@ class ConquestHealth(
     fun updateHealth(newHealth: Int) {
         currentHealth = newHealth
     }
-    fun damage(damageAmount: Int)
-    {
+    fun damage(damageAmount: Int) {
         currentHealth -= damageAmount
     }
 }

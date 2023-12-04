@@ -196,7 +196,6 @@ class ConquestLevel(
                         )
                     }
                 }
-
             } else {
                 if (levelEndStatistics.none { levelEndStatistic -> levelEndStatistic.playerId == player.id }) {
                     levelEndStatistics.add(
