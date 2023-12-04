@@ -179,6 +179,9 @@ class ConquestLevel(
 
         for (player in players) {
             if (player.playerHealth.isAlive) {
+                if (player.onFire) {
+                    player.playerHealth.damage(1)
+                }
                 if (player.numberOfFlagsBeingTouched > 0) {
                     if (levelEndStatistics.none { levelEndStatistic -> levelEndStatistic.playerId == player.id }) {
                         levelEndStatistics.add(
@@ -193,6 +196,7 @@ class ConquestLevel(
                         )
                     }
                 }
+
             } else {
                 if (levelEndStatistics.none { levelEndStatistic -> levelEndStatistic.playerId == player.id }) {
                     levelEndStatistics.add(
@@ -210,10 +214,6 @@ class ConquestLevel(
         }
 
         tick++
-    }
-
-    fun getEntities(): MutableList<ConquestEntity> {
-        return entities
     }
 
     companion object {
