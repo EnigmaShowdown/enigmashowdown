@@ -201,6 +201,16 @@ class GameScreen(
             // This will complete in the background. We won't check for a successful response. We'll just assume it's fine.
             requestClient.send(LevelRequest(ConquestLevelInfo.LEVEL_4.levelId))
         }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_5)) {
+            // TODO remove this once we properly implement level selection
+            // This will complete in the background. We won't check for a successful response. We'll just assume it's fine.
+            requestClient.send(LevelRequest(ConquestLevelInfo.LEVEL_5.levelId))
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_6)) {
+            // TODO remove this once we properly implement level selection
+            // This will complete in the background. We won't check for a successful response. We'll just assume it's fine.
+            requestClient.send(LevelRequest(ConquestLevelInfo.LEVEL_6.levelId))
+        }
         if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
             // TODO remove this once we properly implement level selection
             // This will complete in the background. We won't check for a successful response. We'll just assume it's fine.
