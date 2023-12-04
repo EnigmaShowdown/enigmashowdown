@@ -154,19 +154,23 @@ class ConquestLevel(
         }
 
     fun move(gameMove: GameMove<ConquestAction>) {
-//        logger.info("On level tick: {} moves are: {}", tick, gameMove)
+//        logger.info("On level tick: {} moves are: {}", tick, gameMove
 
         for (player in players) {
-            val action: ConquestAction? = gameMove.actions[player.id]
-            if (action != null) {
-                action.moveAction?.let { moveAction ->
-                    val speed = max(0.0, min(player.currentMaxSpeed, moveAction.speed))
-                    val x = cos(moveAction.directionRadians)
-                    val y = sin(moveAction.directionRadians)
+            if (player.playerHealth.isAlive) {
+                val action: ConquestAction? = gameMove.actions[player.id]
+                if (action != null) {
+                    action.moveAction?.let { moveAction ->
+                        val speed = max(0.0, min(player.currentMaxSpeed, moveAction.speed))
+                        val x = cos(moveAction.directionRadians)
+                        val y = sin(moveAction.directionRadians)
 
-                    player.playerBody.linearVelocity = tempVector.set((x * speed).toFloat(), (y * speed).toFloat())
+                        player.playerBody.linearVelocity = tempVector.set((x * speed).toFloat(), (y * speed).toFloat())
 //                    logger.info("x: $x, y: $y, current player position: ${player.playerBody.position}")
+                    }
                 }
+            } else {
+                player.playerBody.linearVelocity = Vector2.Zero
             }
         }
         // in a 60fps game, you typically do velocityIterations=6 and positionIterations=2
@@ -174,15 +178,32 @@ class ConquestLevel(
         world.step(EnigmaShowdownConstants.TICK_PERIOD_SECONDS, 36, 12)
 
         for (player in players) {
-            if (player.numberOfFlagsBeingTouched > 0) {
+            if (player.playerHealth.isAlive) {
+                if (player.onFire) {
+                    player.playerHealth.damage(1)
+                }
+                if (player.numberOfFlagsBeingTouched > 0) {
+                    if (levelEndStatistics.none { levelEndStatistic -> levelEndStatistic.playerId == player.id }) {
+                        levelEndStatistics.add(
+                            LevelEndStatistic(
+                                player.id,
+                                LevelEndStatus.COMPLETE,
+                                tick,
+                                player.playerHealth.damageTaken,
+                                0,
+                                0,
+                            ),
+                        )
+                    }
+                }
+            } else {
                 if (levelEndStatistics.none { levelEndStatistic -> levelEndStatistic.playerId == player.id }) {
                     levelEndStatistics.add(
                         LevelEndStatistic(
                             player.id,
-                            LevelEndStatus.COMPLETE,
+                            LevelEndStatus.FAILED,
                             tick,
-                            // TODO populate these statistic field with non-zero values
-                            0,
+                            player.playerHealth.damageTaken,
                             0,
                             0,
                         ),
