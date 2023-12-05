@@ -191,15 +191,15 @@ class EntitySpriteManager(
                 }
                 EntityType.FIRE -> {
                     val image = Image().apply {
-                        setSize(1.0f, 1.0f)
+                        setSize(1.0f, 2.0f)
                         setPosition(-0.5f, -0.5f)
                     }
+                    val regions = renderObject.mainSkin.atlas.findRegions("fire").map { TextureRegionDrawable(it) }
+                    val frames = regions // this makes it cycle in a "bounce"
                     EntitySprite(
                         { drawable -> image.drawable = drawable },
                         BasicAnimation(
-                            AnimationFrames(
-                                listOf(renderObject.mainSkin.getDrawable("fire_block")),
-                            ) { 1.0f }, // the frame length does not matter, since there is only one frame
+                            AnimationFrames(frames) { 0.12f },
                         ),
                     ).also { sprite ->
                         sprite.group.addActor(image)
