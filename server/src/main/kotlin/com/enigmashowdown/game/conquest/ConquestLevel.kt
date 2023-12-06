@@ -211,7 +211,7 @@ class ConquestLevel(
         for (player in players) {
             if (player.playerHealth.isAlive) {
                 if (player.onFire) {
-                    player.playerHealth.damage(1)
+                    player.playerHealth.damage(5)
                 }
                 if (player.numberOfFlagsBeingTouched > 0) {
                     if (levelEndStatistics.none { levelEndStatistic -> levelEndStatistic.playerId == player.id }) {

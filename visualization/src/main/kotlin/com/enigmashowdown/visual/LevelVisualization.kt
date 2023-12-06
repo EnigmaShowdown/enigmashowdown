@@ -121,7 +121,13 @@ class LevelVisualization(
         if (endDisplay == null && gameState.levelEndStatistics.isNotEmpty()) {
             require(gameState.levelEndStatistics.size == 1) { "We currently don't have logic implemented for multiple level end statistics" }
             val statistic = gameState.levelEndStatistics[0]
-            endDisplay = LevelEndDisplay(renderObject, statistic.status, statistic.tickEndedOn, 0, 0, 0, doReturnHome, doRestartLevel)
+            var damageTaken = 0
+            for (entity in gameState.entities) {
+                if (entity.entityType == EntityType.PLAYER) {
+                    damageTaken = entity.health!!.totalHealth - entity.health!!.health
+                }
+            }
+            endDisplay = LevelEndDisplay(renderObject, statistic.status, statistic.tickEndedOn, damageTaken, 0, 0, doReturnHome, doRestartLevel)
         } else if (endDisplay != null && gameState.levelEndStatistics.isEmpty()) {
             endDisplay = null
         }
