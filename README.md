@@ -1,48 +1,47 @@
 # Enigma Showdown
 Enigma Showdown is a framework for allowing anyone to create an AI to play a real time game.
 This codebase contains that framework, along with the game, Enigma Showdown: Conquest.
-Conquest is a game fully implemented using the framework, and the `view` module contains code for visualizing Conquest.
+Conquest is a game fully implemented using the framework.
 
-## [Project Structure](https://enigmashowdown.readthedocs.io/en/latest/development/project/structure.html)
+## Who is this game for?
 
-See https://enigmashowdown.readthedocs.io/en/latest/development/project/structure.html for more info.
-
-## Objective
-
-This game is played by programming an AI to move the player through the level to reach the goal flag.
-
-## Mechanics
-
-### The player
-
-The player has a hitbox of the size 1.8
-
-### The map
-
-Each level has its own unique map with certain characteristics
-
-#### Ground type
-
-The ground type alters how the player is able to move.
-
-#### Barrier type
-
-The barrier determines ...
-
-### Electronics
-
-A level may have electronics in it, which are basically boolean variables that can be altered by the state of the map (e.g. levers, pressure plates).
-A hidden "electronics panel", may have logic gates inside it to assign a boolean value based on other boolean variables.
-The visualization should be able to show and hide the electronics panel, as not all of the logic will be shown on the map itself.
+This game is for anyone who wants to improve their programming skills by solving puzzles that require
+you to write code to control a player to solve those puzzles!
+This is targeted at intermediate level programmers,
+but should also be fun for advanced programmers who want to compete for the fastest time in a given leve.
 
 
+## About this game
 
-## Puzzle ideas
+When you start to play this game, you must choose a level that you want to create a bot for.
+If you want a challenge, you may choose to create a bot that can react to its environment and complete any level.
 
-### Water to put fire out
+Components in each level include:
 
-You must fight multiple waves of enemies. Every once in a while, an enemy will light you on fire.
-When this happens, you must go to the water to put yourself out.
+* Pushing crates onto a pressure plate to open a door
+* Taking damage from fire
+* Using water to put yourself out from the fire
+
+
+## Playing the Game
+
+The game is played by writing code to control the player.
+For best support, you may choose Kotlin or Java as your language.
+Python and C++ are also supported.
+
+## Getting Started with Kotlin or Java
+
+To get started with Kotlin or Java, use [template-jvm](https://github.com/EnigmaShowdown/template-jvm)
+as a template to create a repository containing boilerplate code to get you started.
+
+
+## Getting Started with Python or C++
+
+The Python and C++ repositories do not currently have template repositories to help get you started.
+To play the game using either of these languages, you may clone their client repositories and edit the code inside of them:
+
+* https://github.com/EnigmaShowdown/python-client
+* https://github.com/EnigmaShowdown/cpp-client
 
 
 ## Similar Games
