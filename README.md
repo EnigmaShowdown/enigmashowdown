@@ -8,7 +8,7 @@ Conquest is a game fully implemented using the framework.
 This game is for anyone who wants to improve their programming skills by solving puzzles that require
 you to write code to control a player to solve those puzzles!
 This is targeted at intermediate level programmers,
-but should also be fun for advanced programmers who want to compete for the fastest time in a given leve.
+but should also be fun for advanced programmers who want to compete for the fastest time in a given level.
 
 
 ## About this game
