@@ -122,11 +122,8 @@ class ConquestLevel(
                 for (entity in entities) {
                     when (entity) {
                         is ConquestPlayer -> entity.teleport(41f, 50f)
-                        is ConquestCrate -> entity.teleport(55f, 50f)
-                        is ConquestFlag -> entity.teleport(40f, 58f)
-                        is ConquestPressurePlate -> entity.teleport(60.5f, 50f)
+                        is ConquestFlag -> entity.teleport(53f, 63f)
                         // Remove test lines later
-                        is ConquestDoor -> entity.teleport(58.5f, 55f)
                     }
                 }
             }
@@ -135,7 +132,7 @@ class ConquestLevel(
                 for (entity in entities) {
                     when (entity) {
                         is ConquestPlayer -> entity.teleport(43f, 44f)
-                        is ConquestFlag -> entity.teleport(66f, 70f)
+                        is ConquestFlag -> entity.teleport(67f, 71f)
                     }
                 }
             }
@@ -153,9 +150,10 @@ class ConquestLevel(
                 for (entity in entities) {
                     when (entity) {
                         is ConquestPlayer -> entity.teleport(41f, 50f)
-                        is ConquestCrate -> entity.teleport(55f, 50f)
-                        is ConquestFlag -> entity.teleport(61f, 60f)
-                        is ConquestPressurePlate -> entity.teleport(64f, 58f)
+                        is ConquestCrate -> entity.teleport(65f, 55f)
+                        is ConquestFlag -> entity.teleport(62f, 68f)
+                        is ConquestPressurePlate -> entity.teleport(65f, 59f)
+                        is ConquestDoor -> entity.teleport(61.5f, 62.5f)
                     }
                 }
             }
@@ -163,7 +161,7 @@ class ConquestLevel(
                 for (entity in entities) {
                     when (entity) {
                         is ConquestPlayer -> entity.teleport(41f, 55f)
-                        is ConquestFlag -> entity.teleport(75f, 55f)
+                        is ConquestFlag -> entity.teleport(75f, 56f)
                     }
                 }
             }
@@ -171,7 +169,7 @@ class ConquestLevel(
                 for (entity in entities) {
                     when (entity) {
                         is ConquestPlayer -> entity.teleport(41f, 55f)
-                        is ConquestFlag -> entity.teleport(78f, 55f)
+                        is ConquestFlag -> entity.teleport(80f, 56f)
                     }
                 }
             }
