@@ -20,8 +20,8 @@ dependencies {
 tasks.register('dist', Jar) {
     with jar
     dependsOn classes
+    duplicatesStrategy DuplicatesStrategy.EXCLUDE
     from {
-        duplicatesStrategy DuplicatesStrategy.EXCLUDE
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 

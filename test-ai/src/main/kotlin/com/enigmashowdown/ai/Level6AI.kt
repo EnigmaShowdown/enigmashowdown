@@ -39,7 +39,7 @@ object Level6AI : StateListener {
                 PlayerActionRequest(
                     playerId,
                     state.tick,
-                    if (state.tick < 21.0) {
+                    if (state.tick < 20.0) {
                         ConquestAction(
                             moveAction = MoveAction(Math.toRadians(-7.0), 10.0),
                         )
